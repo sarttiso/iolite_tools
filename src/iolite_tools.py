@@ -18,7 +18,7 @@ def match_prefix(spot_name, prefix_dict):
     return match
 
 
-def read_excel_files(files):
+def read_excel_files(files, prefix_dict=None):
     """
     given list of paths to excel files output by Iolite 4, read them and make a dataframe.
     """
@@ -38,6 +38,9 @@ def read_excel_files(files):
     cols_drop = [list(df)[x] for x in idx_drop]
     # print(idx_drop)
     df.drop(cols_drop, axis=1, inplace=True)
+
+    if prefix_dict is not None:
+        df['sample'] = df['spot'].apply(match_prefix, prefix_dict=prefix_dict)
 
     return df
 
