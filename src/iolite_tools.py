@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import os
 import radage
@@ -29,6 +30,15 @@ def read_excel_files(files):
 
     df = pd.concat(dfs)
     
+    # rename first column to be 'spot'
+    df.rename({'Unnamed: 0': 'spot'}, axis=1, inplace=True)
+
+    # drop empty columns (other Unnamed columns)
+    idx_drop = np.atleast_1d(np.argwhere(['Unnamed:' in x for x in list(df)]).squeeze())
+    cols_drop = [list(df)[x] for x in idx_drop]
+    # print(idx_drop)
+    df.drop(cols_drop, axis=1, inplace=True)
+
     return df
 
 
