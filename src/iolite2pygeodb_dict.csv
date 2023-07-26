@@ -74,8 +74,8 @@ Final Pb207/Pb206 age_2SE(prop),Pb207/Pb206 age,uncertainty,2SE(prop)
 Final U238/Pb206_mean,U238/Pb206,mean,ratio
 Final U238/Pb206_2SE(prop),U238/Pb206,uncertainty,2SE(prop)
 Final U/Th_mean,U/Th,mean,ratio
-Approx_U_PPM_mean,U,uncertainty,ppm
+Approx_U_PPM_mean,U,mean,ppm
 Approx_Th_PPM_mean,Th,mean,ppm
-Approx_Pb_PPM_mean,Pb,uncertainty,ppm
+Approx_Pb_PPM_mean,Pb,mean,ppm
 rho 207Pb/206Pb v 238U/206Pb,rho 207Pb/206Pb v 238U/206Pb,mean,error correlation
-rho 206Pb/238U v 207Pb/235U,rho 206Pb/238U v 207Pb/235U,uncertainty,error correlation
+rho 206Pb/238U v 207Pb/235U,rho 206Pb/238U v 207Pb/235U,mean,error correlation
