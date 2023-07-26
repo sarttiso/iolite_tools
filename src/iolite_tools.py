@@ -157,14 +157,30 @@ def excel2measurements(excel_paths, run_dates, run_numbers, run_type):
         # rename first column
         df.rename({'Unnamed: 0': 'analysis'}, axis=1, inplace=True)
 
-        # rename spots yyyy-mm_run#_spot
+        # save spots
+        spot_names = df['analysis'].values
+
+        # analyses are yyyy-mm_run_runtype_spot
         assert yyyymm_validator(
             run_dates[ii]), 'Run date must have yyyy-mm format.'
         df['analysis'] = f'{run_dates[ii]}_{run_numbers[ii]}_{run_type}_' + \
             df['analysis']
 
-        # make spot index
-        df.set_index('analysis', inplace=True)
+        # use spot names with run date and run number as aliquot names
+        aliquots = [f'{run_dates[ii]}_{run_numbers[ii]}_' + spot
+                    for spot in spot_names]
+
+        # parse samples from spot names
+        samples = [parsesample(spot) for spot in spot_names]
+
+        # make multiindex analyses the index
+        df.set_index(pd.MultiIndex.from_arrays([df['analysis'].values,
+                                                aliquots,
+                                                samples],
+                                               names=['analysis',
+                                                      'aliquot',
+                                                      'sample']),
+                     inplace=True)
 
         # keep only measurement columns
         cols_to_drop = [col for col in list(df)
