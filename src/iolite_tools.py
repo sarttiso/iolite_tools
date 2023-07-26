@@ -209,7 +209,7 @@ def excel2measurements(excel_paths, run_dates, run_numbers, run_type):
     return df
 
 
-def analyses2sql(df, date='', instrument='', technique=''):
+def analyses2sql(df, date='', instrument='', technique='', material=''):
     """
     this function yields a dataframe that can be used to add/update analyses to
     the Analyses table in geochemdb.
@@ -229,6 +229,10 @@ def analyses2sql(df, date='', instrument='', technique=''):
         Should match options in the Techniques table.
         ICPMS, LASS ICPMS, ID-TIMS
         The default is ''.
+    material : str, optional
+        Should match options in the Materials table.
+        zircon, apatite, wholerock
+        The default is ''.
 
     Returns
     -------
@@ -246,6 +250,7 @@ def analyses2sql(df, date='', instrument='', technique=''):
     df_sql['date'] = date
     df_sql['instrument'] = instrument
     df_sql['technique'] = technique
+    df_sql['material'] = material
 
     return df_sql
 
