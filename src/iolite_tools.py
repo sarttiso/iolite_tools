@@ -271,6 +271,9 @@ def measurements2sql(df, refmat=''):
         with columns to match Measurements table in geochemdb
 
     """
+    # drop aliquot and sample from index
+    df = df.droplevel(['aliquot', 'sample'])
+
     # make top level column index an index
     df = df.stack(level=0).copy()
     cols_df = list(df)
@@ -306,6 +309,9 @@ def measurements2sql(df, refmat=''):
 
     # set reference materials
     df_sql['reference_material'] = refmat
+
+    # make index into columns
+    df_sql.reset_index(inplace=True)
 
     return df_sql
 
