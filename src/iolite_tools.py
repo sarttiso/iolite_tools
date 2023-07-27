@@ -209,7 +209,42 @@ def excel2measurements(excel_paths, run_dates, run_numbers, run_type):
     return df
 
 
-def analyses2sql(df, date='', instrument='', technique='', material=''):
+def aliquots2sql(df, material=''):
+    """
+    Generate a DataFrame of aliquots for use with pygeodb.measurements_add()
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        ideally from excel2measurements, should have multiindex with
+        'analysis', 'aliquot', and 'sample'
+    material : str, optional
+        Should match options in the Materials table.
+        zircon, apatite, wholerock
+        The default is ''.
+
+    Returns
+    -------
+    df_sql : TYPE
+        DESCRIPTION.
+
+    """
+    # make multiindex into columns
+    df_sql = df.index.to_frame(index=False)
+
+    # drop duplicates
+    df_sql.drop_duplicates('analysis', inplace=True)
+
+    # drop analysis
+    df_sql.drop('analysis', inplace=True)
+
+    # add columns
+    df_sql['material'] = material
+
+    return df_sql
+
+
+def analyses2sql(df, date='', instrument='', technique=''):
     """
     this function yields a dataframe that can be used to add/update analyses to
     the Analyses table in geochemdb.
@@ -228,10 +263,6 @@ def analyses2sql(df, date='', instrument='', technique='', material=''):
     technique : str, optional
         Should match options in the Techniques table.
         ICPMS, LASS ICPMS, ID-TIMS
-        The default is ''.
-    material : str, optional
-        Should match options in the Materials table.
-        zircon, apatite, wholerock
         The default is ''.
 
     Returns
