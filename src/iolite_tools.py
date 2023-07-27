@@ -281,7 +281,6 @@ def analyses2sql(df, date='', instrument='', technique=''):
     df_sql['date'] = date
     df_sql['instrument'] = instrument
     df_sql['technique'] = technique
-    df_sql['material'] = material
 
     return df_sql
 
