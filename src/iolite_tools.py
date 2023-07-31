@@ -141,7 +141,7 @@ def excel2measurements(excel_paths, run_dates, run_numbers, run_type):
 
     run_type : str
         for example, U-Pb, trace, Hf; type of the run for which data was
-        reduced. suffixed to 
+        reduced. suffixed to
 
     Returns
     -------
@@ -150,6 +150,10 @@ def excel2measurements(excel_paths, run_dates, run_numbers, run_type):
         columns
 
     """
+    excel_paths = np.atleast_1d(excel_paths)
+    run_dates = np.atleast_1d(run_dates)
+    run_numbers = np.atleast_1d(run_numbers)
+
     dfs = []
     for ii, excel_path in enumerate(excel_paths):
         # load dataframe
@@ -236,7 +240,7 @@ def aliquots2sql(df, material=''):
     df_sql.drop_duplicates('analysis', inplace=True)
 
     # drop analysis
-    df_sql.drop('analysis', inplace=True)
+    df_sql.drop(columns=['analysis'], inplace=True)
 
     # add columns
     df_sql['material'] = material
