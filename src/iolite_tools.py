@@ -197,7 +197,8 @@ def excel2measurements(excel_paths, run_dates, run_numbers, run_type):
         cols = list(df)
 
         # rename columns to be multiindex
-        idx = np.array([x in cols for x in iolite2pygeo_df['iolite'].values])
+        idx = np.array([np.argwhere(col == iolite2pygeo_df['iolite'].values).squeeze() \
+                         for col in cols])
         cols_new = pd.MultiIndex.from_arrays(
             [iolite2pygeo_df.iloc[idx]['quantity'],
              iolite2pygeo_df.iloc[idx]['unit']])

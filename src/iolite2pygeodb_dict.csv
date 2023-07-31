@@ -1,93 +1,111 @@
-﻿iolite,quantity,type,unit,,,,
-238U_ppm_mean,U238,mean,ppm,,,,
-238U_ppm_2SE(int),U238,uncertainty,2SE(int),,,,
-235U_ppm_mean,U235,mean,ppm,,,,
-235U_ppm_2SE(int),U235,uncertainty,2SE(int),,,,
-232Th_ppm_mean,Th232,mean,ppm,,,,
-232Th_ppm_2SE(int),Th232,uncertainty,2SE(int),,,,
-208Pb_ppm_mean,Pb208,mean,ppm,,,,
-208Pb_ppm_2SE(int),Pb208,uncertainty,2SE(int),,,,
-207Pb_ppm_mean,Pb207,mean,ppm,,,,
-207Pb_ppm_2SE(int),Pb207,uncertainty,2SE(int),,,,
-206Pb_ppm_mean,Pb206,mean,ppm,,,,
-206Pb_ppm_2SE(int),Pb206,uncertainty,2SE(int),,,,
-204Pb_ppm_mean,Pb204,mean,ppm,,,,
-204Pb_ppm_2SE(int),Pb204,uncertainty,2SE(int),,,,
-202Pb_ppm_mean,Pb202,mean,ppm,,,,
-202Pb_ppm_2SE(int),Pb202,uncertainty,2SE(int),,,,
-P31_ppm_mean,P,mean,ppm,,,,
-P31_ppm_2SE(int),P,uncertainty,2SE(int),,,,
-Ti49_ppm_mean,Ti,mean,ppm,,,,
-Ti49_ppm_2SE(int),Ti,uncertainty,2SE(int),,,,
-Y89_ppm_mean,Y,mean,ppm,,,,
-Y89_ppm_2SE(int),Y,uncertainty,2SE(int),,,,
-Zr90_ppm_mean,Zr,mean,ppm,,,,
-Zr90_ppm_2SE(int),Zr,uncertainty,2SE(int),,,,
-Nb93_ppm_mean,Nb,mean,ppm,,,,
-Nb93_ppm_2SE(int),Nb,uncertainty,2SE(int),,,,
-La139_ppm_mean,La,mean,ppm,,,,
-La139_ppm_2SE(int),La,uncertainty,2SE(int),,,,
-Ce140_ppm_mean,Ce,mean,ppm,,,,
-Ce140_ppm_2SE(int),Ce,uncertainty,2SE(int),,,,
-Pr141_ppm_mean,Pr,mean,ppm,,,,
-Pr141_ppm_2SE(int),Pr,uncertainty,2SE(int),,,,
-Nd146_ppm_mean,Nd,mean,ppm,,,,
-Nd146_ppm_2SE(int),Nd,uncertainty,2SE(int),,,,
-Sm147_ppm_mean,Sm,mean,ppm,,,,
-Sm147_ppm_2SE(int),Sm,uncertainty,2SE(int),,,,
-Eu153_ppm_mean,Eu,mean,ppm,,,,
-Eu153_ppm_2SE(int),Eu,uncertainty,2SE(int),,,,
-Gd157_ppm_mean,Gd,mean,ppm,,,,
-Gd157_ppm_2SE(int),Gd,uncertainty,2SE(int),,,,
-Tb159_ppm_mean,Tb,mean,ppm,,,,
-Tb159_ppm_2SE(int),Tb,uncertainty,2SE(int),,,,
-Dy163_ppm_mean,Dy,mean,ppm,,,,
-Dy163_ppm_2SE(int),Dy,uncertainty,2SE(int),,,,
-Ho165_ppm_mean,Ho,mean,ppm,,,,
-Ho165_ppm_2SE(int),Ho,uncertainty,2SE(int),,,,
-Er166_ppm_mean,Er,mean,ppm,,,,
-Er166_ppm_2SE(int),Er,uncertainty,2SE(int),,,,
-Tm169_ppm_mean,Tm,mean,ppm,,,,
-Tm169_ppm_2SE(int),Tm,uncertainty,2SE(int),,,,
-Yb172_ppm_mean,Yb,mean,ppm,,,,
-Yb172_ppm_2SE(int),Yb,uncertainty,2SE(int),,,,
-Lu175_ppm_mean,Lu,mean,ppm,,,,
-Lu175_ppm_2SE(int),Lu,uncertainty,2SE(int),,,,
-Hf179_ppm_mean,Hf,mean,ppm,,,,
-Hf179_ppm_2SE(int),Hf,uncertainty,2SE(int),,,,
-Ta181_ppm_mean,Ta,mean,ppm,,,,
-Ta181_ppm_2SE(int),Ta,uncertainty,2SE(int),,,,
-Final Pb206/U238_mean,Pb206/U238,mean,ratio,,,,
-Final Pb206/U238_2SE(int),Pb206/U238,uncertainty,2SE(int),,,,
-Final Pb206/U238_2SE(prop),Pb206/U238,uncertainty,2SE(prop),,,,
-Final Pb206/U238 age_mean,Pb206/U238 age,mean,age (Ma),,,,
-Final Pb206/U238 age_2SE(int),Pb206/U238 age,uncertainty,2SE(int),,,,
-Final Pb206/U238 age_2SE(prop),Pb206/U238 age,uncertainty,2SE(prop),,,,
-Final Pb207/U235_mean,Pb207/U235,mean,ratio,,,,
-Final Pb207/U235_2SE(prop),Pb207/U235,uncertainty,2SE(prop),,,,
-Final Pb207/U235 age_mean,Pb207/U235 age,mean,age (Ma),,,,
-Final Pb207/U235 age_2SE(int),Pb207/U235 age,uncertainty,2SE(int),,,,
-Final Pb207/U235 age_2SE(prop),Pb207/U235 age,uncertainty,2SE(prop),,,,
-Final Pb208/Th232_mean,Pb208/Th232,mean,ratio,,,,
-Final Pb208/Th232_2SE(int),Pb208/Th232,uncertainty,2SE(int),,,,
-Final Pb208/Th232_2SE(prop),Pb208/Th232,uncertainty,2SE(prop),,,,
-Final Pb208/Th232 age_mean,Pb208/Th232age,mean,age (Ma),,,,
-Final Pb208/Th232 age_2SE(int),Pb208/Th232age,uncertainty,2SE(int),,,,
-Final Pb208/Th232 age_2SE(prop),Pb208/Th232age,uncertainty,2SE(prop),,,,
-Final Pb207/Pb206_mean,Pb207/Pb206,mean,ratio,,,,
-Final Pb207/Pb206_2SE(int),Pb207/Pb206,uncertainty,2SE(int),,,,
-Final Pb207/Pb206_2SE(prop),Pb207/Pb206,uncertainty,2SE(prop),,,,
-Final Pb207/Pb206 age_mean,Pb207/Pb206 age,mean,age (Ma),,,,
-Final Pb207/Pb206 age_2SE(int),Pb207/Pb206 age,uncertainty,2SE(int),,,,
-Final Pb207/Pb206 age_2SE(prop),Pb207/Pb206 age,uncertainty,2SE(prop),,,,
-Final U238/Pb206_mean,U238/Pb206,mean,ratio,,,,
-Final U238/Pb206_2SE(int),U238/Pb206,uncertainty,2SE(int),,,,
-Final U238/Pb206_2SE(prop),U238/Pb206,uncertainty,2SE(prop),,,,
-Final U/Th_mean,U/Th,mean,ratio,,,,
-Approx_U_PPM_mean,U,mean,ppm,,,,
-Approx_Th_PPM_mean,Th,mean,ppm,,,,
-Approx_Pb_PPM_mean,Pb,mean,ppm,,,,
-rho 207Pb/206Pb v 238U/206Pb,rho 207Pb/206Pb v 238U/206Pb,mean,error correlation,,,,
-rho 206Pb/238U v 207Pb/235U,rho 206Pb/238U v 207Pb/235U,mean,error correlation,,,,
-,,,,,,,
-,,,,,,,
+﻿iolite,quantity,type,unit
+238U_ppm_mean,U238,mean,ppm
+238U_ppm_2SE(int),U238,uncertainty,2SE(int)
+235U_ppm_mean,U235,mean,ppm
+235U_ppm_2SE(int),U235,uncertainty,2SE(int)
+232Th_ppm_mean,Th232,mean,ppm
+232Th_ppm_2SE(int),Th232,uncertainty,2SE(int)
+208Pb_ppm_mean,Pb208,mean,ppm
+208Pb_ppm_2SE(int),Pb208,uncertainty,2SE(int)
+207Pb_ppm_mean,Pb207,mean,ppm
+207Pb_ppm_2SE(int),Pb207,uncertainty,2SE(int)
+206Pb_ppm_mean,Pb206,mean,ppm
+206Pb_ppm_2SE(int),Pb206,uncertainty,2SE(int)
+204Pb_ppm_mean,Pb204,mean,ppm
+204Pb_ppm_2SE(int),Pb204,uncertainty,2SE(int)
+202Pb_ppm_mean,Pb202,mean,ppm
+202Pb_ppm_2SE(int),Pb202,uncertainty,2SE(int)
+P31_ppm_mean,P,mean,ppm
+P31_ppm_2SE(int),P,uncertainty,2SE(int)
+Ti49_ppm_mean,Ti,mean,ppm
+Ti49_ppm_2SE(int),Ti,uncertainty,2SE(int)
+Y89_ppm_mean,Y,mean,ppm
+Y89_ppm_2SE(int),Y,uncertainty,2SE(int)
+Zr90_ppm_mean,Zr,mean,ppm
+Zr90_ppm_2SE(int),Zr,uncertainty,2SE(int)
+Nb93_ppm_mean,Nb,mean,ppm
+Nb93_ppm_2SE(int),Nb,uncertainty,2SE(int)
+La139_ppm_mean,La,mean,ppm
+La139_ppm_2SE(int),La,uncertainty,2SE(int)
+Ce140_ppm_mean,Ce,mean,ppm
+Ce140_ppm_2SE(int),Ce,uncertainty,2SE(int)
+Pr141_ppm_mean,Pr,mean,ppm
+Pr141_ppm_2SE(int),Pr,uncertainty,2SE(int)
+Nd146_ppm_mean,Nd,mean,ppm
+Nd146_ppm_2SE(int),Nd,uncertainty,2SE(int)
+Sm147_ppm_mean,Sm,mean,ppm
+Sm147_ppm_2SE(int),Sm,uncertainty,2SE(int)
+Eu153_ppm_mean,Eu,mean,ppm
+Eu153_ppm_2SE(int),Eu,uncertainty,2SE(int)
+Gd157_ppm_mean,Gd,mean,ppm
+Gd157_ppm_2SE(int),Gd,uncertainty,2SE(int)
+Tb159_ppm_mean,Tb,mean,ppm
+Tb159_ppm_2SE(int),Tb,uncertainty,2SE(int)
+Dy163_ppm_mean,Dy,mean,ppm
+Dy163_ppm_2SE(int),Dy,uncertainty,2SE(int)
+Ho165_ppm_mean,Ho,mean,ppm
+Ho165_ppm_2SE(int),Ho,uncertainty,2SE(int)
+Er166_ppm_mean,Er,mean,ppm
+Er166_ppm_2SE(int),Er,uncertainty,2SE(int)
+Tm169_ppm_mean,Tm,mean,ppm
+Tm169_ppm_2SE(int),Tm,uncertainty,2SE(int)
+Yb172_ppm_mean,Yb,mean,ppm
+Yb172_ppm_2SE(int),Yb,uncertainty,2SE(int)
+Lu175_ppm_mean,Lu,mean,ppm
+Lu175_ppm_2SE(int),Lu,uncertainty,2SE(int)
+Hf179_ppm_mean,Hf,mean,ppm
+Hf179_ppm_2SE(int),Hf,uncertainty,2SE(int)
+Ta181_ppm_mean,Ta,mean,ppm
+Ta181_ppm_2SE(int),Ta,uncertainty,2SE(int)
+Final Pb206/U238_mean,Pb206/U238,mean,ratio
+Final Pb206/U238_2SE(int),Pb206/U238,uncertainty,2SE(int)
+Final Pb206/U238_2SE(prop),Pb206/U238,uncertainty,2SE(prop)
+Final Pb206/U238 age_mean,Pb206/U238 age,mean,age (Ma)
+Final Pb206/U238 age_2SE(int),Pb206/U238 age,uncertainty,2SE(int)
+Final Pb206/U238 age_2SE(prop),Pb206/U238 age,uncertainty,2SE(prop)
+Final Pb207/U235_mean,Pb207/U235,mean,ratio
+Final Pb207/U235_2SE(prop),Pb207/U235,uncertainty,2SE(prop)
+Final Pb207/U235 age_mean,Pb207/U235 age,mean,age (Ma)
+Final Pb207/U235 age_2SE(int),Pb207/U235 age,uncertainty,2SE(int)
+Final Pb207/U235 age_2SE(prop),Pb207/U235 age,uncertainty,2SE(prop)
+Final Pb208/Th232_mean,Pb208/Th232,mean,ratio
+Final Pb208/Th232_2SE(int),Pb208/Th232,uncertainty,2SE(int)
+Final Pb208/Th232_2SE(prop),Pb208/Th232,uncertainty,2SE(prop)
+Final Pb208/Th232 age_mean,Pb208/Th232age,mean,age (Ma)
+Final Pb208/Th232 age_2SE(int),Pb208/Th232age,uncertainty,2SE(int)
+Final Pb208/Th232 age_2SE(prop),Pb208/Th232age,uncertainty,2SE(prop)
+Final Pb207/Pb206_mean,Pb207/Pb206,mean,ratio
+Final Pb207/Pb206_2SE(int),Pb207/Pb206,uncertainty,2SE(int)
+Final Pb207/Pb206_2SE(prop),Pb207/Pb206,uncertainty,2SE(prop)
+Final Pb207/Pb206 age_mean,Pb207/Pb206 age,mean,age (Ma)
+Final Pb207/Pb206 age_2SE(int),Pb207/Pb206 age,uncertainty,2SE(int)
+Final Pb207/Pb206 age_2SE(prop),Pb207/Pb206 age,uncertainty,2SE(prop)
+Final U238/Pb206_mean,U238/Pb206,mean,ratio
+Final U238/Pb206_2SE(int),U238/Pb206,uncertainty,2SE(int)
+Final U238/Pb206_2SE(prop),U238/Pb206,uncertainty,2SE(prop)
+Final U/Th_mean,U/Th,mean,ratio
+Approx_U_PPM_mean,U,mean,ppm
+Approx_Th_PPM_mean,Th,mean,ppm
+Approx_Pb_PPM_mean,Pb,mean,ppm
+rho 207Pb/206Pb v 238U/206Pb,rho 207Pb/206Pb v 238U/206Pb,mean,error correlation
+rho 206Pb/238U v 207Pb/235U,rho 206Pb/238U v 207Pb/235U,mean,error correlation
+Si28_ppm_mean,Si,mean,ppm
+Si28_ppm_2SE(RMinc),Si,uncertainty,2SE(RMinc)
+P31_ppm_2SE(RMinc),P,uncertainty,2SE(RMinc)
+Sr88_ppm_mean,Sr,mean,ppm
+Sr88_ppm_2SE(RMinc),Sr,uncertainty,2SE(RMinc)
+Y89_ppm_2SE(RMinc),Y,uncertainty,2SE(RMinc)
+La139_ppm_2SE(RMinc),La,uncertainty,2SE(RMinc)
+Ce140_ppm_2SE(RMinc),Ce,uncertainty,2SE(RMinc)
+Pr141_ppm_2SE(RMinc),Pr,uncertainty,2SE(RMinc)
+Nd146_ppm_2SE(RMinc),Nd,uncertainty,2SE(RMinc)
+Sm147_ppm_2SE(RMinc),Sm,uncertainty,2SE(RMinc)
+Eu153_ppm_2SE(RMinc),Eu,uncertainty,2SE(RMinc)
+Gd157_ppm_2SE(RMinc),Gd,uncertainty,2SE(RMinc)
+Tb159_ppm_2SE(RMinc),Tb,uncertainty,2SE(RMinc)
+Dy163_ppm_2SE(RMinc),Dy,uncertainty,2SE(RMinc)
+Ho165_ppm_2SE(RMinc),Ho,uncertainty,2SE(RMinc)
+Er166_ppm_2SE(RMinc),Er,uncertainty,2SE(RMinc)
+Tm169_ppm_2SE(RMinc),Tm,uncertainty,2SE(RMinc)
+Yb172_ppm_2SE(RMinc),Yb,uncertainty,2SE(RMinc)
+Lu175_ppm_2SE(RMinc),Lu,uncertainty,2SE(RMinc)
