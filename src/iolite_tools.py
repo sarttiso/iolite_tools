@@ -17,16 +17,6 @@ iolite2pygeo_df = pd.read_csv(module_directory / 'iolite2pygeodb_dict.csv')
 unit2type_df = iolite2pygeo_df[['type', 'unit']].drop_duplicates()
 unit2type_dict = dict(zip(unit2type_df['unit'], unit2type_df['type']))
 
-
-class Iolite2DB:
-    """
-    class for piping iolite data into pygeodb
-    """
-
-    def __init__(self):
-        return
-
-
 def parsesample(iolite_spot):
     """
     Take an iolite spot string and return the sample part of the name
@@ -43,6 +33,13 @@ def parsesample(iolite_spot):
     """
     # count number of underscores
     iolite_spot_split = iolite_spot.split('_')
+    # might be using a dash
+    if len(iolite_spot_split) == 1:
+        iolite_spot_split = iolite_spot.split('-')
+    # if still 1, something is wrong
+    assert len(iolite_spot_split) > 1, \
+        'Spots should be either _ or - delimited.'
+
     n_under = len(iolite_spot_split)
 
     # likely a standard
