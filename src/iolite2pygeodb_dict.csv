@@ -65,6 +65,7 @@ Final Pb206/U238 age_2SE(int),Pb206/U238 age,uncertainty,2SE(int)
 Final Pb206/U238 age_2SE(prop),Pb206/U238 age,uncertainty,2SE(prop)
 Final Pb207/U235_mean,Pb207/U235,mean,ratio
 Final Pb207/U235_2SE(prop),Pb207/U235,uncertainty,2SE(prop)
+Final Pb207/U235_2SE(int),Pb207/U235,uncertainty,2SE(int)
 Final Pb207/U235 age_mean,Pb207/U235 age,mean,age (Ma)
 Final Pb207/U235 age_2SE(int),Pb207/U235 age,uncertainty,2SE(int)
 Final Pb207/U235 age_2SE(prop),Pb207/U235 age,uncertainty,2SE(prop)
