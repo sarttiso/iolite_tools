@@ -312,7 +312,7 @@ def measurements2sql(df, refmat=''):
     df = df.droplevel(['aliquot', 'sample'])
 
     # make top level column index an index
-    df = df.stack(level=0).copy()
+    df = df.stack(level=0, future_stack=True).copy()
     cols_df = list(df)
 
     n_rows = len(df)
@@ -334,15 +334,14 @@ def measurements2sql(df, refmat=''):
                     'uncertainty': 'uncertainty_unit'}
 
     # match mean and uncertainty columns
-    for ii in range(n_rows):
-        cur_idx = np.atleast_1d(np.argwhere(~df.iloc[ii].isna()).squeeze())
-        for col_idx in cur_idx:
-            cur_df_col = cols_df[col_idx]
-            cur_type = unit2type_dict[cur_df_col]
+    for ii in df.index:
+        cur_cols = df.loc[ii].dropna().index
+        for col in cur_cols:
+            cur_type = unit2type_dict[col]
             # update mean or uncertainty with value
-            df_sql.iloc[ii][cur_type] = df.iloc[ii, col_idx]
+            df_sql.loc[ii, cur_type] = df.loc[ii, col]
             # update measurement type
-            df_sql.iloc[ii][unitcol_dict[cur_type]] = cur_df_col
+            df_sql.loc[ii, unitcol_dict[cur_type]] = col
 
     # set reference materials
     df_sql['reference_material'] = refmat
