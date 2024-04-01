@@ -157,7 +157,7 @@ def excel2measurements(excel_paths, run_dates, run_numbers, run_type):
         df = pd.read_excel(excel_path, sheet_name='Data')
 
         # rename first column
-        df.rename({'Unnamed: 0': 'analysis'}, axis=1, inplace=True)
+        df.rename({df.columns[0]: 'analysis'}, axis=1, inplace=True)
 
         # save spots
         spot_names = df['analysis'].values
