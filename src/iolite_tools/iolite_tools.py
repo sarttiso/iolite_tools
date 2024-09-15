@@ -11,10 +11,10 @@ module_file_path = os.path.abspath(__file__)
 # Get the directory containing the module file
 module_directory = Path(os.path.dirname(module_file_path))
 
-iolite2pygeo_df = pd.read_csv(module_directory / 'iolite2pygeodb_dict.csv')
+iolite2geochemdb_df = pd.read_csv(module_directory / 'iolite2geochemdb_dict.csv')
 
 # dictionary linking units to type of measurement
-unit2type_df = iolite2pygeo_df[['type', 'unit']].drop_duplicates()
+unit2type_df = iolite2geochemdb_df[['type', 'unit']].drop_duplicates()
 unit2type_dict = dict(zip(unit2type_df['unit'], unit2type_df['type']))
 
 def parsesample(iolite_spot):
@@ -186,7 +186,7 @@ def excel2measurements(excel_paths, run_dates, run_numbers, run_type):
 
         # keep only measurement columns
         cols_to_drop = [col for col in list(df)
-                        if col not in iolite2pygeo_df['iolite'].tolist()]
+                        if col not in iolite2geochemdb_df['iolite'].tolist()]
 
         df.drop(columns=cols_to_drop, inplace=True)
 
@@ -194,11 +194,11 @@ def excel2measurements(excel_paths, run_dates, run_numbers, run_type):
         cols = list(df)
 
         # rename columns to be multiindex
-        idx = np.array([np.argwhere(col == iolite2pygeo_df['iolite'].values).squeeze() \
+        idx = np.array([np.argwhere(col == iolite2geochemdb_df['iolite'].values).squeeze() \
                         for col in cols])
         cols_new = pd.MultiIndex.from_arrays(
-            [iolite2pygeo_df.iloc[idx]['quantity'],
-             iolite2pygeo_df.iloc[idx]['unit']])
+            [iolite2geochemdb_df.iloc[idx]['quantity'],
+             iolite2geochemdb_df.iloc[idx]['unit']])
 
         # set new columns
         df = df.set_axis(cols_new, axis=1)
