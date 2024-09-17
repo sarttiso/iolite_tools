@@ -1,3 +1,3 @@
-from . import iolite_tools
+from .iolite_tools   import *
 
-__all__ = [iolite_tools]
+__all__ = ['GeochemDB', 'aliquot_average']

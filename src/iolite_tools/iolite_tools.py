@@ -213,7 +213,7 @@ def excel2measurements(excel_paths, run_dates, run_numbers, run_type):
 
 def aliquots2sql(df, material=''):
     """
-    Generate a DataFrame of aliquots for use with pygeodb.measurements_add()
+    Generate a DataFrame of aliquots for use with geochemdb.measurements_add()
 
     Parameters
     ----------
@@ -260,7 +260,7 @@ def analyses2sql(df, date='', instrument='', technique=''):
         yyyy-mm-dd of the analyses. The default is ''.
     instrument : str, optional
         should match options in Instruments table.
-        Nu Plasma, Nu Plasma 3D, Agilent 7700x.
+        Nu Plasma, Nu Plasma 3D, Agilent 7700x, Agilent 8900
         The default is ''.
     technique : str, optional
         Should match options in the Techniques table.
