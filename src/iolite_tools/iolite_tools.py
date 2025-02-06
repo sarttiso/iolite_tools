@@ -385,3 +385,81 @@ def get_ages(df):
                        df_rho76_86.iloc[ii]['mean'],
                        name=df.index[ii][0]))
     return ages
+
+
+def propagate_standard_uncertainty():
+    """
+    for a dataframe export from iolite, propagate uncertainty into all observations such that each standard population has MSWD <= 1
+
+    UNFINISHED
+    """
+    stand_strs = ['AusZ', 'GJ1', 'Plesovice', '9435', '91500', 'Temora']
+
+    # files = glob.glob('exports/*run[0-9].xlsx')
+
+    dfs = []
+    for file in files:
+        dfs.append(pd.read_excel(file, sheet_name='Data', index_col=0))
+
+    # for each run, scale standard standard errors to enforce MSWD<=1
+    for ii in range(len(files)):
+        cur_scale = 1
+        for jj in range(len(stand_strs)):
+            # find standard analyses
+            idx = dfs[ii].index.str.match(stand_strs[jj])
+            curdat = dfs[ii][idx]
+            mu = np.mean(curdat['Final Pb206/U238 age_mean'])
+            mswd = np.sum((curdat['Final Pb206/U238 age_mean']-mu)**2 /
+                          (curdat['Final Pb206/U238 age_2SE(prop)']/2*cur_scale)**2)/(np.sum(idx)-1)
+            while mswd > 1:
+                cur_scale = cur_scale + 0.01
+                mswd = np.sum((curdat['Final Pb206/U238 age_mean']-mu)**2 /
+                              (curdat['Final Pb206/U238 age_2SE(prop)']/2*cur_scale)**2)/(np.sum(idx)-1)
+        # rescale all uncertainties
+        dfs[ii][list(dfs[ii].filter(like='2SE'))] = cur_scale * dfs[ii][list(
+            dfs[ii].filter(like='2SE'))]
+        dfs[ii][list(dfs[ii].filter(like='2SD'))] = cur_scale * dfs[ii][list(
+            dfs[ii].filter(like='2SD'))]
+
+    # concatenate
+    dat = pd.concat(dfs, axis=0)
+
+    n_dat = len(dat)
+
+
+def get_ages(df):
+    """Produce radage.UPb age objects
+
+    Create radage.UPb age objects from data in GeochemDB.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame of U-Pb measurements, ideally from GeochemDB.GeochemDB.measurements_by_sample(). Must have a hierarchical column index with the following levels: 'Pb206/U238', 'Pb207/U235', 'Pb207/Pb206', 'rho 206Pb/238U v 207Pb/235U', 'rho 207Pb/206Pb v 238U/206Pb'. Each level should have 'mean' and 'uncertainty' sublevels. 
+    
+    Returns
+    -------
+    ages : list
+        List of radage.UPb objects.
+    """
+    # cols
+    cols = [('Pb206/U238', 'mean'), 
+            ('Pb206/U238', 'uncertainty'), 
+            ('Pb207/U235', 'mean'),
+            ('Pb207/U235', 'uncertainty'),
+            ('Pb207/Pb206', 'mean'),
+            ('Pb207/Pb206', 'uncertainty'),
+            ('rho 206Pb/238U v 207Pb/235U', 'mean'),
+            ('rho 207Pb/206Pb v 238U/206Pb', 'mean')]
+    
+    ages = []
+    for ii in range(df.shape[0]):
+        ages.append(radage.UPb(df.iloc[ii][cols[0]], 
+                              df.iloc[ii][cols[1]]/2,
+                              df.iloc[ii][cols[2]], 
+                              df.iloc[ii][cols[3]]/2, 
+                              df.iloc[ii][cols[4]], 
+                              df.iloc[ii][cols[5]]/2, 
+                              df.iloc[ii][cols[6]],
+                              df.iloc[ii][cols[7]], name=df.index[ii]))
+    return ages
