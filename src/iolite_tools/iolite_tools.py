@@ -14,6 +14,9 @@ from scipy.spatial import cKDTree
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 
+import ipywidgets as widgets
+from ipywidgets import interact
+
 # Get the path of the module file
 module_file_path = os.path.abspath(__file__)
 
@@ -476,6 +479,11 @@ class RasterMap:
         # process data_df
         # drop columns where every row is nan
         self.data_df = self.data_df.dropna(axis=1, how='all')
+        # set 0 values to fraction of minimum non-zero value in data columns (i.e. columns with ppm or cps in name)
+        for col in self.data_df.columns:
+            if 'ppm' in col or 'cps' in col:
+                non_zero_min = self.data_df[self.data_df[col] > 0][col].min()
+                self.data_df.loc[self.data_df[col] == 0, col] = non_zero_min / 5
 
         # grid data
         self._grid_data()
@@ -627,7 +635,7 @@ class RasterMap:
 
         c = ax.imshow(self.data_grids[element], 
                       extent=(self.xi.min(), self.xi.max(), 
-                              self.yi.min(), self.yi.max()),
+                              self.yi.max(), self.yi.min()),
                       cmap=cmap, norm=norm)
         
         ax.set_title(f'Raster Map of {element}')
@@ -636,3 +644,73 @@ class RasterMap:
         plt.colorbar(c, ax=ax, label=element)
 
         return ax
+    
+    def plot_element_widget(self):
+        """
+        Create an interactive widget to choose element to plot.
+
+        Returns
+        -------
+        None.
+        """
+        # list elements with ppm or cps in name
+        element_options = [key for key in self.data_grids.keys() if 'ppm' in key or 'cps' in key]
+
+        # set up widgets manually
+
+        # element select
+        element_select = widgets.Dropdown(options=element_options, 
+                                          description='Element:')
+
+        # color options
+        cscale_select = widgets.Dropdown(options=['log', 'linear'], 
+                                         description='Color Scale:')
+        cmin_text = widgets.FloatText(value=None,
+                                      description='cmin:')
+        cmax_text = widgets.FloatText(value=None,
+                                      description='cmax:')
+        
+        # plot button
+        plot_button = widgets.Button(description="Plot")
+
+        # output area
+        output = widgets.Output()
+        
+        # update values for cmin, cmax when element or cscale changes
+        def update_cmin_cmax(*args):
+            element = element_select.value
+            cscale = cscale_select.value
+            if cscale == 'log':
+                cmin_text.value = np.nanpercentile(self.data_grids[element], 1)
+                cmax_text.value = np.nanpercentile(self.data_grids[element], 99)
+            elif cscale == 'linear':
+                cmin_text.value = np.nanmin(self.data_grids[element])
+                cmax_text.value = np.nanmax(self.data_grids[element])
+        element_select.observe(update_cmin_cmax, names='value')
+        cscale_select.observe(update_cmin_cmax, names='value')
+        
+        ui = widgets.VBox([element_select, 
+                           cscale_select,
+                           cmin_text,
+                           cmax_text,
+                           plot_button,
+                           output])
+        display(ui)
+        
+        # define plot function, placed in output area
+        def plot_func():
+            with output:
+                output.clear_output()
+                fig, ax = plt.subplots(figsize=(8, 6))
+                self.plot_element(element_select.value,
+                                ax=ax,
+                                cscale=cscale_select.value,
+                                cmin=cmin_text.value,
+                                cmax=cmax_text.value)
+                plt.show()
+
+        # bind plot function to button click
+        def on_plot_button_clicked(b):
+            plot_func()
+
+        plot_button.on_click(on_plot_button_clicked)
