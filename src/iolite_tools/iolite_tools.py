@@ -701,7 +701,8 @@ class RasterMap:
 
         ax.imshow(rgb_image,
                   extent=(self.xi.min(), self.xi.max(), 
-                          self.yi.max(), self.yi.min()))
+                          self.yi.max(), self.yi.min()),
+                aspect='equal')
         
         ax.set_title(f'RGB Composite: R={r_element}, G={g_element}, B={b_element}')
         ax.set_xlabel(self.x_col)
@@ -838,8 +839,15 @@ class RasterMap:
         for idx in range(3):
             update_cmin_cmax_channel(idx)
 
+        # plot with axis checkbox
+        axis_checkbox = widgets.Checkbox(value=True, description='Show Axis')
+
         # plot button
         plot_button = widgets.Button(description="Plot")
+
+        # save checkbox and path
+        save_path = widgets.Text(value='', description='Save Path:')
+        save_check = widgets.Checkbox(value=False, description="Save")
 
         # output area
         output = widgets.Output()
@@ -854,7 +862,9 @@ class RasterMap:
                                                       cmin_b_text,
                                                       cmax_b_text])]),
                            cscale_select,
+                           axis_checkbox,
                            plot_button,
+                           widgets.HBox([save_path, save_check]),
                            output])
         display(ui)
         
@@ -874,6 +884,13 @@ class RasterMap:
                               cmax_g=cmax_g_text.value,
                               cmin_b=cmin_b_text.value,
                               cmax_b=cmax_b_text.value)
+                if not axis_checkbox.value:
+                    ax.axis('off')
+                if save_check.value and save_path.value != '':
+                    plt.savefig(save_path.value, 
+                                format='png',
+                                transparent=True,
+                                dpi=600, bbox_inches='tight')
                 plt.show()
         # bind plot function to button click
         def on_plot_button_clicked(b):
