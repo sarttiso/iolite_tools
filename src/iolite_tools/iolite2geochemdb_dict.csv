@@ -92,9 +92,11 @@ rho 207Pb/206Pb v 238U/206Pb,rho 207Pb/206Pb v 238U/206Pb,mean,error correlation
 rho 206Pb/238U v 207Pb/235U,rho 206Pb/238U v 207Pb/235U,mean,error correlation
 Si28_ppm_mean,Si,mean,ppm
 Si28_ppm_2SE(RMinc),Si,uncertainty,2SE(RMinc)
+Si28_ppm_2SE(int),Si,uncertainty,2SE(int)
 P31_ppm_2SE(RMinc),P,uncertainty,2SE(RMinc)
 Sr88_ppm_mean,Sr,mean,ppm
 Sr88_ppm_2SE(RMinc),Sr,uncertainty,2SE(RMinc)
+Sr88_ppm_2SE(int),Sr,uncertainty,2SE(int)
 Y89_ppm_2SE(RMinc),Y,uncertainty,2SE(RMinc)
 La139_ppm_2SE(RMinc),La,uncertainty,2SE(RMinc)
 Ce140_ppm_2SE(RMinc),Ce,uncertainty,2SE(RMinc)
@@ -146,3 +148,15 @@ Lu_ppm_m175,Lu,mean,ppm
 Lu_ppm_m175_Int2SE,Lu,uncertainty,2SE(int)
 Hf_ppm_m178,Hf,mean,ppm
 Hf_ppm_m178_Int2SE,Hf,uncertainty,2SE(int)
+Mg24_ppm_mean,Mg,mean,ppm
+Mg24_ppm_2SE(int),Mg,uncertainty,2SE(int)
+Al27_ppm_mean,Al,mean,ppm
+Al27_ppm_2SE(int),Al,uncertainty,2SE(int)
+Ca43_ppm_mean,Ca,mean,ppm
+Ca43_ppm_2SE(int),Ca,uncertainty,2SE(int)
+Mn55_ppm_mean,Mn,mean,ppm
+Mn55_ppm_2SE(int),Mn,uncertainty,2SE(int)
+Fe56_ppm_mean,Fe,mean,ppm
+Fe56_ppm_2SE(int),Fe,uncertainty,2SE(int)
+Ba137_ppm_mean,Ba,mean,ppm
+Ba137_ppm_2SE(int),Ba,uncertainty,2SE(int)
