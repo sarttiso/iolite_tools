@@ -5,6 +5,15 @@ from pathlib import Path
 import radage
 import re
 
+import os
+from tqdm.auto import tqdm
+from joblib import Parallel, delayed
+from scipy.interpolate import griddata
+from scipy.spatial import cKDTree
+
+import matplotlib.pyplot as plt
+import matplotlib.colors as colors
+
 # Get the path of the module file
 module_file_path = os.path.abspath(__file__)
 
@@ -425,3 +434,205 @@ def propagate_standard_uncertainty():
     dat = pd.concat(dfs, axis=0)
 
     n_dat = len(dat)
+
+class RasterMap:
+    """Manage and visualize raster scans.
+
+    Developed with output from ToF scans in mind.
+
+    Parameters
+    ----------
+    csv_dir : str
+        Directory containing CSV files corresponding to raster scans.
+    dx : float, optional
+        Pixel size in microns in the x-direction (default is 15.0).
+    dy : float, optional
+        Pixel size in microns in the y-direction (default is 15.0).
+    n_jobs : int, optional
+        Number of parallel jobs to run for parallel tasks (default is 8).
+    x_col : str, optional
+        Column name for x-coordinate (default is 'X').
+    y_col : str, optional
+        Column name for y-coordinate (default is 'Y').
+    
+    Attributes
+    ----------
+    data_df : pd.DataFrame
+        DataFrame containing concatenated data from all CSV files in the directory.        
+    """
+    def __init__(self, csv_dir, 
+                 dx=15., dy=15.,
+                 x_col='X', y_col='Y',
+                 n_jobs=8):
+        """
+        """
+        self.data_df = self._csv2df(csv_dir, n_jobs=n_jobs)
+        self.dx = dx
+        self.dy = dy
+        self.x_col = x_col
+        self.y_col = y_col
+        self.n_jobs = n_jobs
+        
+        # process data_df
+        # drop columns where every row is nan
+        self.data_df = self.data_df.dropna(axis=1, how='all')
+
+        # grid data
+        self._grid_data()
+
+        # mask gridded data where there is no data
+        self._mask_gridded_data()
+        
+    def _csv2df(self, csv_dir, n_jobs=8):
+        """
+
+        Parameters
+        ----------
+        csv_dir : str
+            Directory containing CSV files corresponding to raster scans.
+        n_jobs : int, optional
+            Number of parallel jobs to run, by default 8
+
+        Returns
+        -------
+        pd.DataFrame
+            DataFrame containing concatenated data from all CSV files in the directory.
+
+        Raises
+        ------
+        ValueError
+            If no CSV files are found in the directory.
+        """
+        # list paths to csv files in the directory
+        csv_files = [os.path.join(csv_dir, f) for f in os.listdir(csv_dir) if f.endswith('.csv')]
+        # confirm that there are csv files
+        if len(csv_files) == 0:
+            raise ValueError("No CSV files found in the directory.")
+
+        # output is a DataFrame with each row corresponding to a pixel with x, y, and data columns
+        data_dfs = Parallel(n_jobs=n_jobs)(delayed(pd.read_csv)(csv_path, skiprows=1) for csv_path in tqdm(csv_files, desc="Reading CSV files"))
+        data_df = pd.concat(data_dfs, ignore_index=True)
+        return data_df
+    
+    def _grid_data(self):
+        """Put data onto regular grid.
+
+        Creates self.data_grids, a dictionary with gridded data for each
+        measurement column.
+
+        Returns
+        -------
+        None.
+        """
+        xi = np.linspace(self.data_df[self.x_col].min(), 
+                         self.data_df[self.x_col].max(), 
+                         int((self.data_df[self.x_col].max() - \
+                              self.data_df[self.x_col].min())/self.dx))
+        yi = np.linspace(self.data_df[self.y_col].min(), 
+                         self.data_df[self.y_col].max(), 
+                         int((self.data_df[self.y_col].max() - \
+                              self.data_df[self.y_col].min())/self.dy))
+        xi, yi = np.meshgrid(xi, yi)
+        self.xi = xi
+        self.yi = yi
+
+        # necessary for pickling in Parallel
+        x_col = self.x_col
+        y_col = self.y_col
+
+        def grid_measurement(meas_col, method='linear'):
+            """Grid a single measurement column."""
+            zi = griddata((self.data_df[x_col], 
+                           self.data_df[y_col]), 
+                           self.data_df[meas_col], 
+                           (xi, yi), method=method)
+            return zi
+
+        # grid all measurements (columns with ppm in name)
+        ppm_cols = [col for col in self.data_df.columns if 'ppm' in col]
+        data_gridded = Parallel(n_jobs=self.n_jobs)(delayed(grid_measurement)(col) for col in tqdm(ppm_cols, desc="Gridding measurement columns"))
+        self.data_grids = {col: grid for col, grid in zip(ppm_cols, data_gridded)}
+    
+    def _mask_gridded_data(self):
+        """Mask grid points that are not close to data.
+        """
+        # Set a threshold distance (in microns)
+        mask_thres = np.max([self.dx, self.dy]) * 1.5
+
+        # verify that data grids have been created
+        if not hasattr(self, 'data_grids'):
+            raise AttributeError("Data grids not found. Please run _grid_data() first.")
+
+        # for each grid point, get closest data point
+        data_points = self.data_df[[self.x_col, self.y_col]].values
+        grid_points = np.vstack([self.xi.ravel(), 
+                                 self.yi.ravel()]).T
+        tree = cKDTree(data_points)
+        distances, _ = tree.query(grid_points, k=1)
+        distance_grid = distances.reshape(self.xi.shape)
+
+        # Mask grid points too far from data (apply to all data grids)
+        data_grids_masked = {col: np.where(distance_grid > mask_thres,
+                                            np.nan, 
+                                            grid) for col, grid in self.data_grids.items()}
+        self.data_grids = data_grids_masked
+
+    def plot_element(self, element, 
+                     ax=None, 
+                     cmap='viridis',
+                     cscale='log', cmin=None, cmax=None):
+        """
+        Plot gridded data for a specified element.
+
+        Parameters
+        ----------
+        element : str
+            Element name corresponding to a measurement column (e.g., 'Si_ppm').
+        ax : matplotlib.axes.Axes, optional
+            Axes object to plot on. If None, a new figure and axes are created.
+        cmap : str, optional
+            Colormap to use for the plot (default is 'viridis').
+        cscale : str, optional
+            Color scale, either 'log' or 'linear' (default is 'log').
+        cmin : float, optional
+            Minimum color scale value (default is None). If none, inferred from data.
+        cmax : float, optional
+            Maximum color scale value (default is None). If none, inferred from data.
+
+        Returns
+        -------
+        matplotlib.axes.Axes
+            Axes object with the plot.
+        """
+
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 6))
+
+        if element not in self.data_grids:
+            raise ValueError(f"Element '{element}' not found in gridded data.")
+        
+        if cscale == 'log':
+            # set color scale limits
+            if cmin is None:
+                cmin = np.nanpercentile(self.data_grids[element], 1)
+            if cmax is None:
+                cmax = np.nanpercentile(self.data_grids[element], 99)
+            norm = colors.LogNorm(vmin=cmin, vmax=cmax)
+        elif cscale == 'linear':
+            if cmin is None:
+                cmin = np.nanmin(self.data_grids[element])
+            if cmax is None:
+                cmax = np.nanmax(self.data_grids[element])
+            norm = colors.Normalize(vmin=cmin, vmax=cmax)
+
+        c = ax.imshow(self.data_grids[element], 
+                      extent=(self.xi.min(), self.xi.max(), 
+                              self.yi.min(), self.yi.max()),
+                      cmap=cmap, norm=norm)
+        
+        ax.set_title(f'Raster Map of {element}')
+        ax.set_xlabel(self.x_col)
+        ax.set_ylabel(self.y_col)
+        plt.colorbar(c, ax=ax, label=element)
+
+        return ax
