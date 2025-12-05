@@ -645,6 +645,70 @@ class RasterMap:
 
         return ax
     
+    def plot_RGB(self, r_element, g_element, b_element,
+                 ax=None, cscale='log',
+                 cmin_r=None, cmax_r=None,
+                 cmin_g=None, cmax_g=None,
+                 cmin_b=None, cmax_b=None):
+        """
+        Plot RGB composite of three elements.
+
+        Parameters
+        ----------
+        r_element : str
+            Element name for red channel.
+        g_element : str
+            Element name for green channel.
+        b_element : str
+            Element name for blue channel.
+        ax : matplotlib.axes.Axes, optional
+            Axes object to plot on. If None, a new figure and axes are created.
+        cmin_r, cmax_r : float, optional
+            Color scale limits for red channel.
+        cmin_g, cmax_g : float, optional
+            Color scale limits for green channel.
+        cmin_b, cmax_b : float, optional
+            Color scale limits for blue channel.
+
+        Returns
+        -------
+        matplotlib.axes.Axes
+            Axes object with the plot.
+        """
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(8, 8))
+
+        def scale_channel(data_grid, cmin, cmax, cscale):
+            """Scale a data grid to [0, 1] based on cmin and cmax."""
+            if cmin is None:
+                cmin = np.nanpercentile(data_grid, 1)
+            if cmax is None:
+                cmax = np.nanpercentile(data_grid, 99)
+
+            clipped = np.clip(data_grid, cmin, cmax)
+            if cscale == 'log':
+                clipped = np.log10(clipped)
+            # scale clipped data to [0, 1]
+            scaled = (clipped - np.nanmin(clipped)) / (np.nanmax(clipped) - np.nanmin(clipped))
+
+            return scaled
+
+        r_scaled = scale_channel(self.data_grids[r_element], cmin_r, cmax_r, cscale)
+        g_scaled = scale_channel(self.data_grids[g_element], cmin_g, cmax_g, cscale)
+        b_scaled = scale_channel(self.data_grids[b_element], cmin_b, cmax_b, cscale)
+
+        rgb_image = np.dstack((r_scaled, g_scaled, b_scaled))
+
+        ax.imshow(rgb_image,
+                  extent=(self.xi.min(), self.xi.max(), 
+                          self.yi.max(), self.yi.min()))
+        
+        ax.set_title(f'RGB Composite: R={r_element}, G={g_element}, B={b_element}')
+        ax.set_xlabel(self.x_col)
+        ax.set_ylabel(self.y_col)
+
+        return ax
+    
     def plot_element_widget(self):
         """
         Create an interactive widget to choose element to plot.
