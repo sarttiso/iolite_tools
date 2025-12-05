@@ -778,3 +778,104 @@ class RasterMap:
             plot_func()
 
         plot_button.on_click(on_plot_button_clicked)
+
+    def plot_RGB_widget(self):
+        """
+        Create an interactive widget to choose elements for RGB composite plot.
+
+        Returns
+        -------
+        None.
+        """
+        # list elements with ppm or cps in name
+        element_options = [key for key in self.data_grids.keys() if 'ppm' in key or 'cps' in key]
+
+        # set up widgets manually
+
+        # element selects
+        r_element_select = widgets.Dropdown(options=element_options, 
+                                            description='Red:')
+        g_element_select = widgets.Dropdown(options=element_options, 
+                                            description='Green:')
+        b_element_select = widgets.Dropdown(options=element_options, 
+                                            description='Blue:')
+        # gather into list
+        rgb_element_selects = [r_element_select, g_element_select, b_element_select]
+
+        # color scale option
+        cscale_select = widgets.Dropdown(options=['log', 'linear'], 
+                                         description='Color Scale:')
+
+        # cmin, cmax for each channel
+        cmin_r_text = widgets.FloatText(value=None,
+                                        description='cmin R:')
+        cmax_r_text = widgets.FloatText(value=None,
+                                        description='cmax R:')
+        cmin_g_text = widgets.FloatText(value=None,
+                                        description='cmin G:')
+        cmax_g_text = widgets.FloatText(value=None,
+                                        description='cmax G:')
+        cmin_b_text = widgets.FloatText(value=None,
+                                        description='cmin B:')
+        cmax_b_text = widgets.FloatText(value=None,
+                                        description='cmax B:')
+        # gather into list
+        cbound_texts = [[cmin_r_text, cmax_r_text],
+                        [cmin_g_text, cmax_g_text],
+                        [cmin_b_text, cmax_b_text]]
+        
+        # update cmin, cmax when element changes
+        def update_cmin_cmax_channel(channel_idx, *args):
+            element = rgb_element_selects[channel_idx].value
+            cmin_text = cbound_texts[channel_idx][0]
+            cmax_text = cbound_texts[channel_idx][1]
+            cmin_text.value = np.nanpercentile(self.data_grids[element], 1)
+            cmax_text.value = np.nanpercentile(self.data_grids[element], 99)
+        for idx in range(3):
+            rgb_element_selects[idx].observe(lambda change, idx=idx: update_cmin_cmax_channel(idx), names='value')
+
+        # initialize cmin, cmax values
+        for idx in range(3):
+            update_cmin_cmax_channel(idx)
+
+        # plot button
+        plot_button = widgets.Button(description="Plot")
+
+        # output area
+        output = widgets.Output()
+        
+        ui = widgets.VBox([widgets.HBox([widgets.VBox([r_element_select,
+                                                      cmin_r_text,
+                                                      cmax_r_text]),
+                                        widgets.VBox([g_element_select,
+                                                      cmin_g_text,
+                                                      cmax_g_text]),
+                                        widgets.VBox([b_element_select,
+                                                      cmin_b_text,
+                                                      cmax_b_text])]),
+                           cscale_select,
+                           plot_button,
+                           output])
+        display(ui)
+        
+        # define plot function, placed in output area
+        def plot_func():
+            with output:
+                output.clear_output()
+                fig, ax = plt.subplots(figsize=(8, 8))
+                self.plot_RGB(r_element_select.value,
+                              g_element_select.value,
+                              b_element_select.value,
+                              ax=ax,
+                              cscale=cscale_select.value,
+                              cmin_r=cmin_r_text.value,
+                              cmax_r=cmax_r_text.value,
+                              cmin_g=cmin_g_text.value,
+                              cmax_g=cmax_g_text.value,
+                              cmin_b=cmin_b_text.value,
+                              cmax_b=cmax_b_text.value)
+                plt.show()
+        # bind plot function to button click
+        def on_plot_button_clicked(b):
+            plot_func()
+        plot_button.on_click(on_plot_button_clicked)
