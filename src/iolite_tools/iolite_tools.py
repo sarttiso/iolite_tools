@@ -59,7 +59,7 @@ def parsesample(iolite_spot):
         sample_name = iolite_spot_split[0]
     # likely an unknown
     elif n_under >= 3:
-        sample_name = iolite_spot_split[0:-2]
+        sample_name = iolite_spot_split[0:-1]
 
         # join with spaces
         sample_name = ' '.join(sample_name)
