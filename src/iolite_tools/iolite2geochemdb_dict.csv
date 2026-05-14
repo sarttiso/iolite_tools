@@ -160,3 +160,15 @@ Fe56_ppm_mean,Fe,mean,ppm
 Fe56_ppm_2SE(int),Fe,uncertainty,2SE(int)
 Ba137_ppm_mean,Ba,mean,ppm
 Ba137_ppm_2SE(int),Ba,uncertainty,2SE(int)
+Lu176_Hf177_Corr_mean,Lu176/Hf177,mean,ratio
+Lu176_Hf177_Corr_2SE(int),Lu176/Hf177,uncertainty,2SE(int)
+Yb176_Hf177_Corr_mean,Yb176/Hf177,mean,ratio
+Yb176_Hf177_Corr_2SE(int),Yb176/Hf177,uncertainty,2SE(int)
+Hf176_177_Corr_mean,Hf176/Hf177,mean,ratio
+Hf176_177_Corr_2SE(int),Hf176/Hf177,uncertainty,2SE(int)
+Hf178_177_mean,Hf178/Hf177,mean,ratio
+Hf178_177_2SE(int),Hf178/Hf177,uncertainty,2SE(int)
+StdCorr_Hf176_177_mean,Hf176/Hf177,mean,ratio
+StdCorr_Hf176_177_2SE(int),Hf176/Hf177,uncertainty,2SE(int)
+Hf180_177_mean,Hf180/Hf177,mean,ratio
+Hf180_177_2SE(int),Hf180/Hf177,uncertainty,2SE(int)
