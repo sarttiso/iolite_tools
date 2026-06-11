@@ -719,7 +719,7 @@ class RasterMap:
         ax.set_ylabel(self.y_col)
 
         return ax
-    
+      
     def plot_element_widget(self):
         """
         Create an interactive widget to choose element to plot.
@@ -906,3 +906,57 @@ class RasterMap:
         def on_plot_button_clicked(b):
             plot_func()
         plot_button.on_click(on_plot_button_clicked)
+
+
+def drawscale(scale, ax, loc='lower left', type='bar', px_units=1e-6, scale_units=1e-6):
+    """Add scale indicator to current axis.
+
+    Parameters
+    ----------
+    scale : float
+        Length to illustrate
+    ax : matplotlib.Axes
+        Axes object to add scale indicator to
+    loc : str or tuple, optional
+        Location of the scale indicator, by default 'lower left'. Can also be a tuple of (x, y) axes coordinates.
+    type : str, optional
+        Type of scale indicator to draw, by default 'bar'. Only 'bar' is implemented for now.
+    px_units : float, optional
+        Units for (square) pixel dimensions, by default 1e-6
+    scale_units : float, optional
+        Units of the scale for labeling purposes, by default 1e-6. Labels as mm for 1e-3, or μm for 1e-6.
+    """
+    # if scale_units is 1e-3, label as mm, if 1e-6, label as μm
+    if scale_units == 1e-3:
+        scale_label = 'mm'
+    elif scale_units == 1e-6:
+        scale_label = 'μm'
+    else:
+        scale_label = f'{scale_units} units'
+    if type == 'bar':
+        # get axis limits
+        xlim = ax.get_xlim()
+        ylim = ax.get_ylim()
+
+        # determine position based on loc string or tuple
+        if isinstance(loc, tuple):
+            x_start, y_start = loc
+        elif loc == 'lower left':
+            x_start = xlim[0] + 0.05 * (xlim[1] - xlim[0])
+            y_start = ylim[0] + 0.05 * (ylim[1] - ylim[0])
+        elif loc == 'lower right':
+            x_start = xlim[1] - 0.05 * (xlim[1] - xlim[0]) - scale
+            y_start = ylim[0] + 0.05 * (ylim[1] - ylim[0])
+        elif loc == 'upper left':
+            x_start = xlim[0] + 0.05 * (xlim[1] - xlim[0])
+            y_start = ylim[1] - 0.05 * (ylim[1] - ylim[0]) - scale
+        elif loc == 'upper right':
+            x_start = xlim[1] - 0.05 * (xlim[1] - xlim[0]) - scale
+            y_start = ylim[1] - 0.05 * (ylim[1] - ylim[0]) - scale
+        else:
+            raise ValueError("Invalid location. Choose from 'lower left', 'lower right', 'upper left', 'upper right'.")
+
+        # draw scale bar
+        ax.plot([x_start, x_start + scale*scale_units/px_units], [y_start, y_start], color='k', linewidth=2)
+        ax.text(x_start + scale * scale_units / (2 * px_units), y_start, f'{scale} {scale_label}', color='k',
+                ha='center', va='bottom', fontsize=8)
