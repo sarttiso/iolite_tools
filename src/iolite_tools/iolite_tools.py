@@ -598,7 +598,9 @@ class RasterMap:
     def plot_element(self, element, 
                      ax=None, 
                      cmap='viridis',
-                     cscale='log', cmin=None, cmax=None):
+                     cscale='log', 
+                     cspan=None,
+                     clip=None):
         """
         Plot gridded data for a specified element.
 
@@ -612,10 +614,10 @@ class RasterMap:
             Colormap to use for the plot (default is 'viridis').
         cscale : str, optional
             Color scale, either 'log' or 'linear' (default is 'log').
-        cmin : float, optional
-            Minimum color scale value (default is None). If none, inferred from data.
-        cmax : float, optional
-            Maximum color scale value (default is None). If none, inferred from data.
+        cspan : tuple, optional
+            Tuple of (cmin, cmax) for the color scale. If None, inferred from data.
+        clip : tuple, optional
+            Tuple of (min, max) to clip data values before plotting. If None, no clipping is applied (range is determined by cmin and cmax). Values outside the clip range will be set to the clip limits.
 
         Returns
         -------
@@ -631,19 +633,27 @@ class RasterMap:
         
         if cscale == 'log':
             # set color scale limits
-            if cmin is None:
+            if cspan is None:
                 cmin = np.nanpercentile(self.data_grids[element], 1)
-            if cmax is None:
                 cmax = np.nanpercentile(self.data_grids[element], 99)
+            else:
+                cmin, cmax = cspan
             norm = colors.LogNorm(vmin=cmin, vmax=cmax)
         elif cscale == 'linear':
-            if cmin is None:
+            if cspan is None:
                 cmin = np.nanmin(self.data_grids[element])
-            if cmax is None:
                 cmax = np.nanmax(self.data_grids[element])
+            else:
+                cmin, cmax = cspan
             norm = colors.Normalize(vmin=cmin, vmax=cmax)
 
-        c = ax.imshow(self.data_grids[element], 
+        # apply clipping if specified
+        if clip is not None:
+            cmin_clip, cmax_clip = clip
+            data_to_plot = np.clip(self.data_grids[element], cmin_clip, cmax_clip)
+        else:
+            data_to_plot = self.data_grids[element]
+        c = ax.imshow(data_to_plot,
                       extent=(self.xi.min(), self.xi.max(), 
                               self.yi.max(), self.yi.min()),
                       cmap=cmap, norm=norm)
@@ -657,9 +667,8 @@ class RasterMap:
     
     def plot_RGB(self, r_element, g_element, b_element,
                  ax=None, cscale='log',
-                 cmin_r=None, cmax_r=None,
-                 cmin_g=None, cmax_g=None,
-                 cmin_b=None, cmax_b=None):
+                 r_span=None, g_span=None, b_span=None,
+                 r_clip=None, g_clip=None, b_clip=None):
         """
         Plot RGB composite of three elements.
 
@@ -673,12 +682,20 @@ class RasterMap:
             Element name for blue channel.
         ax : matplotlib.axes.Axes, optional
             Axes object to plot on. If None, a new figure and axes are created.
-        cmin_r, cmax_r : float, optional
-            Color scale limits for red channel.
-        cmin_g, cmax_g : float, optional
-            Color scale limits for green channel.
-        cmin_b, cmax_b : float, optional
-            Color scale limits for blue channel.
+        cscale : str, optional
+            Color scale for each channel, either 'log' or 'linear' (default is 'log').
+        r_span : tuple, optional
+            Tuple of (cmin, cmax) for the red channel. If None, inferred from data.
+        g_span : tuple, optional
+            Tuple of (cmin, cmax) for the green channel. If None, inferred from data.
+        b_span : tuple, optional
+            Tuple of (cmin, cmax) for the blue channel. If None, inferred from data.
+        r_clip : tuple, optional
+            Tuple of (min, max) to clip red channel data values before plotting. If None, no clipping is applied (range is determined by cmin and cmax). Values outside the clip range will be set to the clip limits.
+        g_clip : tuple, optional
+            Tuple of (min, max) to clip green channel data values before plotting. If None, no clipping is applied (range is determined by cmin and cmax). Values outside the clip range will be set to the clip limits.
+        b_clip : tuple, optional
+            Tuple of (min, max) to clip blue channel data values before plotting. If None, no clipping is applied (range is determined by cmin and cmax). Values outside the clip range will be set to the clip limits.
 
         Returns
         -------
@@ -688,24 +705,32 @@ class RasterMap:
         if ax is None:
             fig, ax = plt.subplots(figsize=(8, 8))
 
-        def scale_channel(data_grid, cmin, cmax, cscale):
-            """Scale a data grid to [0, 1] based on cmin and cmax."""
-            if cmin is None:
+        def scale_channel(data_grid, c_span, c_clip, cscale):
+            """Scale a data grid to [0, 1] based on c_span and c_clip."""
+            if c_span is None:
                 cmin = np.nanpercentile(data_grid, 1)
-            if cmax is None:
                 cmax = np.nanpercentile(data_grid, 99)
+            else:
+                cmin, cmax = c_span
 
-            clipped = np.clip(data_grid, cmin, cmax)
+            if c_clip is not None:
+                cmin_clip, cmax_clip = c_clip
+            else:
+                cmin_clip, cmax_clip = cmin, cmax
+
+            clipped = np.clip(data_grid, cmin_clip, cmax_clip)
             if cscale == 'log':
                 clipped = np.log10(clipped)
-            # scale clipped data to [0, 1]
-            scaled = (clipped - np.nanmin(clipped)) / (np.nanmax(clipped) - np.nanmin(clipped))
+                # scale clipped data to [0, 1]
+                scaled = (clipped - np.log10(cmin)) / (np.log10(cmax) - np.log10(cmin))
+            elif cscale == 'linear':
+                scaled = (clipped - cmin) / (cmax - cmin)
 
             return scaled
 
-        r_scaled = scale_channel(self.data_grids[r_element], cmin_r, cmax_r, cscale)
-        g_scaled = scale_channel(self.data_grids[g_element], cmin_g, cmax_g, cscale)
-        b_scaled = scale_channel(self.data_grids[b_element], cmin_b, cmax_b, cscale)
+        r_scaled = scale_channel(self.data_grids[r_element], r_span, r_clip, cscale)
+        g_scaled = scale_channel(self.data_grids[g_element], g_span, g_clip, cscale)
+        b_scaled = scale_channel(self.data_grids[b_element], b_span, b_clip, cscale)
 
         rgb_image = np.dstack((r_scaled, g_scaled, b_scaled))
 
@@ -744,6 +769,11 @@ class RasterMap:
                                       description='cmin:')
         cmax_text = widgets.FloatText(value=None,
                                       description='cmax:')
+        clip_checkbox = widgets.Checkbox(value=False, description='Clip Data')
+        clip_min_text = widgets.FloatText(value=None,
+                                         description='Clip Min:')
+        clip_max_text = widgets.FloatText(value=None,
+                                         description='Clip Max:')
         
         # plot button
         plot_button = widgets.Button(description="Plot")
@@ -765,9 +795,10 @@ class RasterMap:
         cscale_select.observe(update_cmin_cmax, names='value')
         
         ui = widgets.VBox([element_select, 
-                           cscale_select,
-                           cmin_text,
-                           cmax_text,
+                           widgets.HBox([cscale_select,
+                                        cmin_text,
+                                        cmax_text]),
+                           widgets.HBox([clip_checkbox, clip_min_text, clip_max_text]),
                            plot_button,
                            output])
         display(ui)
@@ -780,8 +811,8 @@ class RasterMap:
                 self.plot_element(element_select.value,
                                 ax=ax,
                                 cscale=cscale_select.value,
-                                cmin=cmin_text.value,
-                                cmax=cmax_text.value)
+                                cspan=(cmin_text.value, cmax_text.value),
+                                clip=(clip_min_text.value, clip_max_text.value) if clip_checkbox.value else None)
                 plt.show()
 
         # bind plot function to button click
@@ -830,6 +861,22 @@ class RasterMap:
                                         description='cmin B:')
         cmax_b_text = widgets.FloatText(value=None,
                                         description='cmax B:')
+        # clip min and max for each channel
+        clip_r_checkbox = widgets.Checkbox(value=False, description='Clip R')
+        clip_r_min_text = widgets.FloatText(value=None,
+                                         description='Clip R Min:')
+        clip_r_max_text = widgets.FloatText(value=None,
+                                         description='Clip R Max:')
+        clip_g_checkbox = widgets.Checkbox(value=False, description='Clip G')
+        clip_g_min_text = widgets.FloatText(value=None,
+                                         description='Clip G Min:')
+        clip_g_max_text = widgets.FloatText(value=None,
+                                         description='Clip G Max:')
+        clip_b_checkbox = widgets.Checkbox(value=False, description='Clip B')
+        clip_b_min_text = widgets.FloatText(value=None,
+                                         description='Clip B Min:')
+        clip_b_max_text = widgets.FloatText(value=None,
+                                         description='Clip B Max:')
         # gather into list
         cbound_texts = [[cmin_r_text, cmax_r_text],
                         [cmin_g_text, cmax_g_text],
@@ -864,13 +911,22 @@ class RasterMap:
         
         ui = widgets.VBox([widgets.HBox([widgets.VBox([r_element_select,
                                                       cmin_r_text,
-                                                      cmax_r_text]),
+                                                      cmax_r_text,
+                                                      clip_r_checkbox,
+                                                      clip_r_min_text,
+                                                      clip_r_max_text]),
                                         widgets.VBox([g_element_select,
                                                       cmin_g_text,
-                                                      cmax_g_text]),
+                                                      cmax_g_text,
+                                                      clip_g_checkbox,
+                                                      clip_g_min_text,
+                                                      clip_g_max_text]),
                                         widgets.VBox([b_element_select,
                                                       cmin_b_text,
-                                                      cmax_b_text])]),
+                                                      cmax_b_text,
+                                                      clip_b_checkbox,
+                                                      clip_b_min_text,
+                                                      clip_b_max_text])]),
                            cscale_select,
                            axis_checkbox,
                            plot_button,
@@ -888,12 +944,12 @@ class RasterMap:
                               b_element_select.value,
                               ax=ax,
                               cscale=cscale_select.value,
-                              cmin_r=cmin_r_text.value,
-                              cmax_r=cmax_r_text.value,
-                              cmin_g=cmin_g_text.value,
-                              cmax_g=cmax_g_text.value,
-                              cmin_b=cmin_b_text.value,
-                              cmax_b=cmax_b_text.value)
+                              r_span=(cmin_r_text.value, cmax_r_text.value),
+                              g_span=(cmin_g_text.value, cmax_g_text.value),
+                              b_span=(cmin_b_text.value, cmax_b_text.value),
+                              r_clip=(clip_r_min_text.value, clip_r_max_text.value) if clip_r_checkbox.value else None,
+                              g_clip=(clip_g_min_text.value, clip_g_max_text.value) if clip_g_checkbox.value else None,
+                              b_clip=(clip_b_min_text.value, clip_b_max_text.value) if clip_b_checkbox.value else None)
                 if not axis_checkbox.value:
                     ax.axis('off')
                 if save_check.value and save_path.value != '':
