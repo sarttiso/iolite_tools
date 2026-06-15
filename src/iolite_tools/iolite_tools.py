@@ -1,21 +1,18 @@
+import os
+import re
+from pathlib import Path
+
+import ipywidgets as widgets
+import matplotlib.colors as colors
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import os
-from pathlib import Path
 import radage
-import re
-
-import os
-from tqdm.auto import tqdm
+from ipywidgets import interact
 from joblib import Parallel, delayed
 from scipy.interpolate import griddata
 from scipy.spatial import cKDTree
-
-import matplotlib.pyplot as plt
-import matplotlib.colors as colors
-
-import ipywidgets as widgets
-from ipywidgets import interact
+from tqdm.auto import tqdm
 
 # Get the path of the module file
 module_file_path = os.path.abspath(__file__)
@@ -23,11 +20,12 @@ module_file_path = os.path.abspath(__file__)
 # Get the directory containing the module file
 module_directory = Path(os.path.dirname(module_file_path))
 
-iolite2geochemdb_df = pd.read_csv(module_directory / 'iolite2geochemdb_dict.csv')
+iolite2geochemdb_df = pd.read_csv(module_directory / "iolite2geochemdb_dict.csv")
 
 # dictionary linking units to type of measurement
-unit2type_df = iolite2geochemdb_df[['type', 'unit']].drop_duplicates()
-unit2type_dict = dict(zip(unit2type_df['unit'], unit2type_df['type']))
+unit2type_df = iolite2geochemdb_df[["type", "unit"]].drop_duplicates()
+unit2type_dict = dict(zip(unit2type_df["unit"], unit2type_df["type"]))
+
 
 def parsesample(iolite_spot):
     """
@@ -44,13 +42,12 @@ def parsesample(iolite_spot):
         sample name
     """
     # count number of underscores
-    iolite_spot_split = iolite_spot.split('_')
+    iolite_spot_split = iolite_spot.split("_")
     # might be using a dash
     if len(iolite_spot_split) == 1:
-        iolite_spot_split = iolite_spot.split('-')
+        iolite_spot_split = iolite_spot.split("-")
     # if still 1, something is wrong
-    assert len(iolite_spot_split) > 1, \
-        'Spots should be either _ or - delimited.'
+    assert len(iolite_spot_split) > 1, "Spots should be either _ or - delimited."
 
     n_under = len(iolite_spot_split)
 
@@ -62,7 +59,7 @@ def parsesample(iolite_spot):
         sample_name = iolite_spot_split[0:-1]
 
         # join with spaces
-        sample_name = ' '.join(sample_name)
+        sample_name = " ".join(sample_name)
 
     return sample_name
 
@@ -82,7 +79,7 @@ def yyyymm_validator(test_str):
         valid or not
 
     """
-    pattern = r'^\d{4}-\d{2}$'
+    pattern = r"^\d{4}-\d{2}$"
     return bool(re.match(pattern, test_str))
 
 
@@ -94,7 +91,7 @@ def match_prefix(spot_name, prefix_dict):
     calling DataFrame.apply.
     """
     # default match is unknown
-    match = 'unknown'
+    match = "unknown"
     for key in prefix_dict:
         if key in spot_name:
             match = prefix_dict[key]
@@ -109,24 +106,23 @@ def read_excel_files(files, prefix_dict=None):
     """
     dfs = []
     for file in files:
-        cur_df = pd.read_excel(file, sheet_name='Data')
-        cur_df['file'] = os.path.splitext(os.path.basename(file))[0]
+        cur_df = pd.read_excel(file, sheet_name="Data")
+        cur_df["file"] = os.path.splitext(os.path.basename(file))[0]
         dfs.append(cur_df)
 
     df = pd.concat(dfs)
 
     # rename first column to be 'spot'
-    df.rename({'Unnamed: 0': 'spot'}, axis=1, inplace=True)
+    df.rename({"Unnamed: 0": "spot"}, axis=1, inplace=True)
 
     # drop empty columns (other Unnamed columns)
-    idx_drop = np.atleast_1d(np.argwhere(
-        ['Unnamed:' in x for x in list(df)]).squeeze())
+    idx_drop = np.atleast_1d(np.argwhere(["Unnamed:" in x for x in list(df)]).squeeze())
     cols_drop = [list(df)[x] for x in idx_drop]
     # print(idx_drop)
     df.drop(cols_drop, axis=1, inplace=True)
 
     if prefix_dict is not None:
-        df['sample'] = df['spot'].apply(match_prefix, prefix_dict=prefix_dict)
+        df["sample"] = df["spot"].apply(match_prefix, prefix_dict=prefix_dict)
 
     return df
 
@@ -166,39 +162,39 @@ def excel2measurements(excel_paths, run_dates, run_numbers, run_type):
     dfs = []
     for ii, excel_path in enumerate(excel_paths):
         # load dataframe
-        df = pd.read_excel(excel_path, sheet_name='Data')
+        df = pd.read_excel(excel_path, sheet_name="Data")
 
         # rename first column
-        df.rename({df.columns[0]: 'analysis'}, axis=1, inplace=True)
+        df.rename({df.columns[0]: "analysis"}, axis=1, inplace=True)
 
         # save spots
-        spot_names = df['analysis'].values
+        spot_names = df["analysis"].values
 
         # analyses are yyyy-mm_run_runtype_spot
-        assert yyyymm_validator(
-            run_dates[ii]), 'Run date must have yyyy-mm format.'
-        df['analysis'] = f'{run_dates[ii]}_{run_numbers[ii]}_{run_type}_' + \
-            df['analysis']
+        assert yyyymm_validator(run_dates[ii]), "Run date must have yyyy-mm format."
+        df["analysis"] = (
+            f"{run_dates[ii]}_{run_numbers[ii]}_{run_type}_" + df["analysis"]
+        )
 
         # use spot names with run date and run number as aliquot names
-        aliquots = [f'{run_dates[ii]}_{run_numbers[ii]}_' + spot
-                    for spot in spot_names]
+        aliquots = [f"{run_dates[ii]}_{run_numbers[ii]}_" + spot for spot in spot_names]
 
         # parse samples from spot names
         samples = [parsesample(spot) for spot in spot_names]
 
         # make multiindex analyses the index
-        df.set_index(pd.MultiIndex.from_arrays([df['analysis'].values,
-                                                aliquots,
-                                                samples],
-                                               names=['analysis',
-                                                      'aliquot',
-                                                      'sample']),
-                     inplace=True)
+        df.set_index(
+            pd.MultiIndex.from_arrays(
+                [df["analysis"].values, aliquots, samples],
+                names=["analysis", "aliquot", "sample"],
+            ),
+            inplace=True,
+        )
 
         # keep only measurement columns
-        cols_to_drop = [col for col in list(df)
-                        if col not in iolite2geochemdb_df['iolite'].tolist()]
+        cols_to_drop = [
+            col for col in list(df) if col not in iolite2geochemdb_df["iolite"].tolist()
+        ]
 
         df.drop(columns=cols_to_drop, inplace=True)
 
@@ -206,11 +202,18 @@ def excel2measurements(excel_paths, run_dates, run_numbers, run_type):
         cols = list(df)
 
         # rename columns to be multiindex
-        idx = np.array([np.argwhere(col == iolite2geochemdb_df['iolite'].values).squeeze() \
-                        for col in cols])
+        idx = np.array(
+            [
+                np.argwhere(col == iolite2geochemdb_df["iolite"].values).squeeze()
+                for col in cols
+            ]
+        )
         cols_new = pd.MultiIndex.from_arrays(
-            [iolite2geochemdb_df.iloc[idx]['quantity'],
-             iolite2geochemdb_df.iloc[idx]['unit']])
+            [
+                iolite2geochemdb_df.iloc[idx]["quantity"],
+                iolite2geochemdb_df.iloc[idx]["unit"],
+            ]
+        )
 
         # set new columns
         df = df.set_axis(cols_new, axis=1)
@@ -223,7 +226,7 @@ def excel2measurements(excel_paths, run_dates, run_numbers, run_type):
     return df
 
 
-def aliquots2sql(df, material=''):
+def aliquots2sql(df, material=""):
     """
     Generate a DataFrame of aliquots for use with geochemdb.measurements_add()
 
@@ -247,18 +250,18 @@ def aliquots2sql(df, material=''):
     df_sql = df.index.to_frame(index=False)
 
     # drop duplicates
-    df_sql.drop_duplicates('analysis', inplace=True)
+    df_sql.drop_duplicates("analysis", inplace=True)
 
     # drop analysis
-    df_sql.drop(columns=['analysis'], inplace=True)
+    df_sql.drop(columns=["analysis"], inplace=True)
 
     # add columns
-    df_sql['material'] = material
+    df_sql["material"] = material
 
     return df_sql
 
 
-def analyses2sql(df, date='', instrument='', technique=''):
+def analyses2sql(df, date="", instrument="", technique=""):
     """
     this function yields a dataframe that can be used to add/update analyses to
     the Analyses table in geochemdb.
@@ -289,17 +292,17 @@ def analyses2sql(df, date='', instrument='', technique=''):
     df_sql = df.index.to_frame(index=False)
 
     # drop duplicates
-    df_sql.drop_duplicates('analysis', inplace=True)
+    df_sql.drop_duplicates("analysis", inplace=True)
 
     # add columns
-    df_sql['date'] = date
-    df_sql['instrument'] = instrument
-    df_sql['technique'] = technique
+    df_sql["date"] = date
+    df_sql["instrument"] = instrument
+    df_sql["technique"] = technique
 
     return df_sql
 
 
-def measurements2sql(df, refmat='', dropna=True):
+def measurements2sql(df, refmat="", dropna=True):
     """
     take a DataFrame generated by excel2measurements and put it into a format
     ready for adding/updating a Measurements table in geochemdb
@@ -323,7 +326,7 @@ def measurements2sql(df, refmat='', dropna=True):
 
     """
     # drop aliquot and sample from index
-    df = df.droplevel(['aliquot', 'sample'])
+    df = df.droplevel(["aliquot", "sample"])
 
     # make top level column index an index
     df = df.stack(level=0, future_stack=True).copy()
@@ -332,20 +335,21 @@ def measurements2sql(df, refmat='', dropna=True):
     n_rows = len(df)
 
     # each row should have at most two non-nan columns
-    assert np.all((~df.isna()).sum(axis=1).values <= 2), \
-        'too many values for measurement'
+    assert np.all((~df.isna()).sum(axis=1).values <= 2), (
+        "too many values for measurement"
+    )
 
     # make df_sql
-    cols_sql = ['mean',
-                'measurement_unit',
-                'uncertainty',
-                'uncertainty_unit',
-                'reference_material']
-    df_sql = pd.DataFrame(index=df.index,
-                          columns=cols_sql)
+    cols_sql = [
+        "mean",
+        "measurement_unit",
+        "uncertainty",
+        "uncertainty_unit",
+        "reference_material",
+    ]
+    df_sql = pd.DataFrame(index=df.index, columns=cols_sql)
 
-    unitcol_dict = {'mean': 'measurement_unit',
-                    'uncertainty': 'uncertainty_unit'}
+    unitcol_dict = {"mean": "measurement_unit", "uncertainty": "uncertainty_unit"}
 
     # match mean and uncertainty columns
     for ii in df.index:
@@ -358,54 +362,63 @@ def measurements2sql(df, refmat='', dropna=True):
             df_sql.loc[ii, unitcol_dict[cur_type]] = col
 
     # set reference materials
-    df_sql['reference_material'] = refmat
+    df_sql["reference_material"] = refmat
 
     # make index into columns
     df_sql.reset_index(inplace=True)
 
     # drop rows with NaN means if specified
     if dropna:
-        idx_nan = df_sql['mean'].isna()
+        idx_nan = df_sql["mean"].isna()
         for row in np.argwhere(idx_nan).reshape(-1):
-            print(f'Dropped row {row} with NaN mean: '+
-                  f"{df_sql.iloc[row][['analysis', 'quantity']].to_dict()}")
+            print(
+                f"Dropped row {row} with NaN mean: "
+                + f"{df_sql.iloc[row][['analysis', 'quantity']].to_dict()}"
+            )
         df_sql = df_sql[~idx_nan].copy()
-        
+
     return df_sql
 
 
 def get_ages(df):
     """
-    produce radage.UPb age objects from U-Pb measurements. assumes columns as 
+    produce radage.UPb age objects from U-Pb measurements. assumes columns as
     generated by excel2measurements, requires isotopic ratios with means and
     uncertainties, as well as error correlations
     """
     # extract only necessary columns
-    df = df[['Pb206/U238', 
-             'Pb207/U235',
-            'Pb207/Pb206', 
-             'rho 207Pb/206Pb v 238U/206Pb', 
-             'rho 206Pb/238U v 207Pb/235U']].copy()
-    
+    df = df[
+        [
+            "Pb206/U238",
+            "Pb207/U235",
+            "Pb207/Pb206",
+            "rho 207Pb/206Pb v 238U/206Pb",
+            "rho 206Pb/238U v 207Pb/235U",
+        ]
+    ].copy()
+
     # separate
-    df68 = df['Pb206/U238'].rename(columns=unit2type_dict)
-    df75 = df['Pb207/U235'].rename(columns=unit2type_dict)
-    df76 = df['Pb207/Pb206'].rename(columns=unit2type_dict)
-    df_rho68_75 = df['rho 206Pb/238U v 207Pb/235U'].rename(columns=unit2type_dict)
-    df_rho76_86 = df['rho 207Pb/206Pb v 238U/206Pb'].rename(columns=unit2type_dict)
-    
+    df68 = df["Pb206/U238"].rename(columns=unit2type_dict)
+    df75 = df["Pb207/U235"].rename(columns=unit2type_dict)
+    df76 = df["Pb207/Pb206"].rename(columns=unit2type_dict)
+    df_rho68_75 = df["rho 206Pb/238U v 207Pb/235U"].rename(columns=unit2type_dict)
+    df_rho76_86 = df["rho 207Pb/206Pb v 238U/206Pb"].rename(columns=unit2type_dict)
+
     ages = []
     for ii in range(df.shape[0]):
         ages.append(
-            radage.UPb(df68.iloc[ii]['mean'],
-                       df68.iloc[ii]['uncertainty'] / 2,
-                       df75.iloc[ii]['mean'],
-                       df75.iloc[ii]['uncertainty'] / 2,
-                       df76.iloc[ii]['mean'],
-                       df76.iloc[ii]['uncertainty'] / 2,
-                       df_rho68_75.iloc[ii]['mean'],
-                       df_rho76_86.iloc[ii]['mean'],
-                       name=df.index[ii][0]))
+            radage.UPb(
+                df68.iloc[ii]["mean"],
+                df68.iloc[ii]["uncertainty"] / 2,
+                df75.iloc[ii]["mean"],
+                df75.iloc[ii]["uncertainty"] / 2,
+                df76.iloc[ii]["mean"],
+                df76.iloc[ii]["uncertainty"] / 2,
+                df_rho68_75.iloc[ii]["mean"],
+                df_rho76_86.iloc[ii]["mean"],
+                name=df.index[ii][0],
+            )
+        )
     return ages
 
 
@@ -415,13 +428,13 @@ def propagate_standard_uncertainty():
 
     UNFINISHED
     """
-    stand_strs = ['AusZ', 'GJ1', 'Plesovice', '9435', '91500', 'Temora']
+    stand_strs = ["AusZ", "GJ1", "Plesovice", "9435", "91500", "Temora"]
 
     # files = glob.glob('exports/*run[0-9].xlsx')
 
     dfs = []
     for file in files:
-        dfs.append(pd.read_excel(file, sheet_name='Data', index_col=0))
+        dfs.append(pd.read_excel(file, sheet_name="Data", index_col=0))
 
     # for each run, scale standard standard errors to enforce MSWD<=1
     for ii in range(len(files)):
@@ -430,23 +443,30 @@ def propagate_standard_uncertainty():
             # find standard analyses
             idx = dfs[ii].index.str.match(stand_strs[jj])
             curdat = dfs[ii][idx]
-            mu = np.mean(curdat['Final Pb206/U238 age_mean'])
-            mswd = np.sum((curdat['Final Pb206/U238 age_mean']-mu)**2 /
-                          (curdat['Final Pb206/U238 age_2SE(prop)']/2*cur_scale)**2)/(np.sum(idx)-1)
+            mu = np.mean(curdat["Final Pb206/U238 age_mean"])
+            mswd = np.sum(
+                (curdat["Final Pb206/U238 age_mean"] - mu) ** 2
+                / (curdat["Final Pb206/U238 age_2SE(prop)"] / 2 * cur_scale) ** 2
+            ) / (np.sum(idx) - 1)
             while mswd > 1:
                 cur_scale = cur_scale + 0.01
-                mswd = np.sum((curdat['Final Pb206/U238 age_mean']-mu)**2 /
-                              (curdat['Final Pb206/U238 age_2SE(prop)']/2*cur_scale)**2)/(np.sum(idx)-1)
+                mswd = np.sum(
+                    (curdat["Final Pb206/U238 age_mean"] - mu) ** 2
+                    / (curdat["Final Pb206/U238 age_2SE(prop)"] / 2 * cur_scale) ** 2
+                ) / (np.sum(idx) - 1)
         # rescale all uncertainties
-        dfs[ii][list(dfs[ii].filter(like='2SE'))] = cur_scale * dfs[ii][list(
-            dfs[ii].filter(like='2SE'))]
-        dfs[ii][list(dfs[ii].filter(like='2SD'))] = cur_scale * dfs[ii][list(
-            dfs[ii].filter(like='2SD'))]
+        dfs[ii][list(dfs[ii].filter(like="2SE"))] = (
+            cur_scale * dfs[ii][list(dfs[ii].filter(like="2SE"))]
+        )
+        dfs[ii][list(dfs[ii].filter(like="2SD"))] = (
+            cur_scale * dfs[ii][list(dfs[ii].filter(like="2SD"))]
+        )
 
     # concatenate
     dat = pd.concat(dfs, axis=0)
 
     n_dat = len(dat)
+
 
 class RasterMap:
     """Manage and visualize raster scans.
@@ -467,31 +487,28 @@ class RasterMap:
         Column name for x-coordinate (default is 'X').
     y_col : str, optional
         Column name for y-coordinate (default is 'Y').
-    
+
     Attributes
     ----------
     data_df : pd.DataFrame
-        DataFrame containing concatenated data from all CSV files in the directory.        
+        DataFrame containing concatenated data from all CSV files in the directory.
     """
-    def __init__(self, csv_dir, 
-                 dx=15., dy=15.,
-                 x_col='X', y_col='Y',
-                 n_jobs=8):
-        """
-        """
+
+    def __init__(self, csv_dir, dx=15.0, dy=15.0, x_col="X", y_col="Y", n_jobs=8):
+        """ """
         self.data_df = self._csv2df(csv_dir, n_jobs=n_jobs)
         self.dx = dx
         self.dy = dy
         self.x_col = x_col
         self.y_col = y_col
         self.n_jobs = n_jobs
-        
+
         # process data_df
         # drop columns where every row is nan
-        self.data_df = self.data_df.dropna(axis=1, how='all')
+        self.data_df = self.data_df.dropna(axis=1, how="all")
         # set 0 values to fraction of minimum non-zero value in data columns (i.e. columns with ppm or cps in name)
         for col in self.data_df.columns:
-            if 'ppm' in col or 'cps' in col:
+            if "ppm" in col or "cps" in col:
                 non_zero_min = self.data_df[self.data_df[col] > 0][col].min()
                 self.data_df.loc[self.data_df[col] == 0, col] = non_zero_min / 5
 
@@ -500,7 +517,7 @@ class RasterMap:
 
         # mask gridded data where there is no data
         self._mask_gridded_data()
-        
+
     def _csv2df(self, csv_dir, n_jobs=8):
         """
 
@@ -522,16 +539,21 @@ class RasterMap:
             If no CSV files are found in the directory.
         """
         # list paths to csv files in the directory
-        csv_files = [os.path.join(csv_dir, f) for f in os.listdir(csv_dir) if f.endswith('.csv')]
+        csv_files = [
+            os.path.join(csv_dir, f) for f in os.listdir(csv_dir) if f.endswith(".csv")
+        ]
         # confirm that there are csv files
         if len(csv_files) == 0:
             raise ValueError("No CSV files found in the directory.")
 
         # output is a DataFrame with each row corresponding to a pixel with x, y, and data columns
-        data_dfs = Parallel(n_jobs=n_jobs)(delayed(pd.read_csv)(csv_path, skiprows=1) for csv_path in tqdm(csv_files, desc="Reading CSV files"))
+        data_dfs = Parallel(n_jobs=n_jobs)(
+            delayed(pd.read_csv)(csv_path, skiprows=1)
+            for csv_path in tqdm(csv_files, desc="Reading CSV files")
+        )
         data_df = pd.concat(data_dfs, ignore_index=True)
         return data_df
-    
+
     def _grid_data(self):
         """Put data onto regular grid.
 
@@ -542,14 +564,22 @@ class RasterMap:
         -------
         None.
         """
-        xi = np.linspace(self.data_df[self.x_col].min(), 
-                         self.data_df[self.x_col].max(), 
-                         int((self.data_df[self.x_col].max() - \
-                              self.data_df[self.x_col].min())/self.dx))
-        yi = np.linspace(self.data_df[self.y_col].min(), 
-                         self.data_df[self.y_col].max(), 
-                         int((self.data_df[self.y_col].max() - \
-                              self.data_df[self.y_col].min())/self.dy))
+        xi = np.linspace(
+            self.data_df[self.x_col].min(),
+            self.data_df[self.x_col].max(),
+            int(
+                (self.data_df[self.x_col].max() - self.data_df[self.x_col].min())
+                / self.dx
+            ),
+        )
+        yi = np.linspace(
+            self.data_df[self.y_col].min(),
+            self.data_df[self.y_col].max(),
+            int(
+                (self.data_df[self.y_col].max() - self.data_df[self.y_col].min())
+                / self.dy
+            ),
+        )
         xi, yi = np.meshgrid(xi, yi)
         self.xi = xi
         self.yi = yi
@@ -558,49 +588,50 @@ class RasterMap:
         x_col = self.x_col
         y_col = self.y_col
 
-        def grid_measurement(meas_col, method='linear'):
+        def grid_measurement(meas_col, method="linear"):
             """Grid a single measurement column."""
-            zi = griddata((self.data_df[x_col], 
-                           self.data_df[y_col]), 
-                           self.data_df[meas_col], 
-                           (xi, yi), method=method)
+            zi = griddata(
+                (self.data_df[x_col], self.data_df[y_col]),
+                self.data_df[meas_col],
+                (xi, yi),
+                method=method,
+            )
             return zi
 
         # grid all measurements (columns with ppm in name)
-        ppm_cols = [col for col in self.data_df.columns if 'ppm' in col]
-        data_gridded = Parallel(n_jobs=self.n_jobs)(delayed(grid_measurement)(col) for col in tqdm(ppm_cols, desc="Gridding measurement columns"))
+        ppm_cols = [col for col in self.data_df.columns if "ppm" in col]
+        data_gridded = Parallel(n_jobs=self.n_jobs)(
+            delayed(grid_measurement)(col)
+            for col in tqdm(ppm_cols, desc="Gridding measurement columns")
+        )
         self.data_grids = {col: grid for col, grid in zip(ppm_cols, data_gridded)}
-    
+
     def _mask_gridded_data(self):
-        """Mask grid points that are not close to data.
-        """
+        """Mask grid points that are not close to data."""
         # Set a threshold distance (in microns)
         mask_thres = np.max([self.dx, self.dy]) * 1.5
 
         # verify that data grids have been created
-        if not hasattr(self, 'data_grids'):
+        if not hasattr(self, "data_grids"):
             raise AttributeError("Data grids not found. Please run _grid_data() first.")
 
         # for each grid point, get closest data point
         data_points = self.data_df[[self.x_col, self.y_col]].values
-        grid_points = np.vstack([self.xi.ravel(), 
-                                 self.yi.ravel()]).T
+        grid_points = np.vstack([self.xi.ravel(), self.yi.ravel()]).T
         tree = cKDTree(data_points)
         distances, _ = tree.query(grid_points, k=1)
         distance_grid = distances.reshape(self.xi.shape)
 
         # Mask grid points too far from data (apply to all data grids)
-        data_grids_masked = {col: np.where(distance_grid > mask_thres,
-                                            np.nan, 
-                                            grid) for col, grid in self.data_grids.items()}
+        data_grids_masked = {
+            col: np.where(distance_grid > mask_thres, np.nan, grid)
+            for col, grid in self.data_grids.items()
+        }
         self.data_grids = data_grids_masked
 
-    def plot_element(self, element, 
-                     ax=None, 
-                     cmap='viridis',
-                     cscale='log', 
-                     cspan=None,
-                     clip=None):
+    def plot_element(
+        self, element, ax=None, cmap="viridis", cscale="log", cspan=None, clip=None
+    ):
         """
         Plot gridded data for a specified element.
 
@@ -630,8 +661,8 @@ class RasterMap:
 
         if element not in self.data_grids:
             raise ValueError(f"Element '{element}' not found in gridded data.")
-        
-        if cscale == 'log':
+
+        if cscale == "log":
             # set color scale limits
             if cspan is None:
                 cmin = np.nanpercentile(self.data_grids[element], 1)
@@ -639,7 +670,7 @@ class RasterMap:
             else:
                 cmin, cmax = cspan
             norm = colors.LogNorm(vmin=cmin, vmax=cmax)
-        elif cscale == 'linear':
+        elif cscale == "linear":
             if cspan is None:
                 cmin = np.nanmin(self.data_grids[element])
                 cmax = np.nanmax(self.data_grids[element])
@@ -653,22 +684,109 @@ class RasterMap:
             data_to_plot = np.clip(self.data_grids[element], cmin_clip, cmax_clip)
         else:
             data_to_plot = self.data_grids[element]
-        c = ax.imshow(data_to_plot,
-                      extent=(self.xi.min(), self.xi.max(), 
-                              self.yi.max(), self.yi.min()),
-                      cmap=cmap, norm=norm)
-        
-        ax.set_title(f'Raster Map of {element}')
+        c = ax.imshow(
+            data_to_plot,
+            extent=(self.xi.min(), self.xi.max(), self.yi.max(), self.yi.min()),
+            cmap=cmap,
+            norm=norm,
+        )
+
+        ax.set_title(f"Raster Map of {element}")
         ax.set_xlabel(self.x_col)
         ax.set_ylabel(self.y_col)
         plt.colorbar(c, ax=ax, label=element)
 
         return ax
-    
-    def plot_RGB(self, r_element, g_element, b_element,
-                 ax=None, cscale='log',
-                 r_span=None, g_span=None, b_span=None,
-                 r_clip=None, g_clip=None, b_clip=None):
+
+    def RGB(
+        self,
+        r_element,
+        g_element,
+        b_element,
+        cscale="log",
+        r_span=None,
+        g_span=None,
+        b_span=None,
+        r_clip=None,
+        g_clip=None,
+        b_clip=None,
+    ):
+        """
+        Create an RGB composite of three elements.
+
+        Parameters
+        ----------
+        r_element : str
+            Element name for red channel.
+        g_element : str
+            Element name for green channel.
+        b_element : str
+            Element name for blue channel.
+        cscale : str, optional
+            Color scale for each channel, either 'log' or 'linear' (default is 'log').
+        r_span : tuple, optional
+            Tuple of (cmin, cmax) for the red channel. If None, inferred from data.
+        g_span : tuple, optional
+            Tuple of (cmin, cmax) for the green channel. If None, inferred from data.
+        b_span : tuple, optional
+            Tuple of (cmin, cmax) for the blue channel. If None, inferred from data.
+        r_clip : tuple, optional
+            Tuple of (min, max) to clip red channel data values before plotting. If None, no clipping is applied (range is determined by cmin and cmax). Values outside the clip range will be set to the clip limits.
+        g_clip : tuple, optional
+            Tuple of (min, max) to clip green channel data values before plotting. If None, no clipping is applied (range is determined by cmin and cmax). Values outside the clip range will be set to the clip limits.
+        b_clip : tuple, optional
+            Tuple of (min, max) to clip blue channel data values before plotting. If None, no clipping is applied (range is determined by cmin and cmax). Values outside the clip range will be set to the clip limits.
+
+        Returns
+        -------
+        np.ndarray
+            RGB image array with shape (height, width, 3).
+        """
+
+        def scale_channel(data_grid, c_span, c_clip, cscale):
+            """Scale a data grid to [0, 1] based on c_span and c_clip."""
+            if c_span is None:
+                cmin = np.nanpercentile(data_grid, 1)
+                cmax = np.nanpercentile(data_grid, 99)
+            else:
+                cmin, cmax = c_span
+
+            if c_clip is not None:
+                cmin_clip, cmax_clip = c_clip
+            else:
+                cmin_clip, cmax_clip = cmin, cmax
+
+            clipped = np.clip(data_grid, cmin_clip, cmax_clip)
+            if cscale == "log":
+                clipped = np.log10(clipped)
+                # scale clipped data to [0, 1]
+                scaled = (clipped - np.log10(cmin)) / (np.log10(cmax) - np.log10(cmin))
+            elif cscale == "linear":
+                scaled = (clipped - cmin) / (cmax - cmin)
+
+            return scaled
+
+        r_scaled = scale_channel(self.data_grids[r_element], r_span, r_clip, cscale)
+        g_scaled = scale_channel(self.data_grids[g_element], g_span, g_clip, cscale)
+        b_scaled = scale_channel(self.data_grids[b_element], b_span, b_clip, cscale)
+
+        rgb_image = np.dstack((r_scaled, g_scaled, b_scaled))
+        return rgb_image
+
+    def plot_RGB(
+        self,
+        r_element,
+        g_element,
+        b_element,
+        ax=None,
+        cscale="log",
+        r_span=None,
+        g_span=None,
+        b_span=None,
+        r_clip=None,
+        g_clip=None,
+        b_clip=None,
+    ):
         """
         Plot RGB composite of three elements.
 
@@ -703,48 +821,33 @@ class RasterMap:
             Axes object with the plot.
         """
         if ax is None:
-            fig, ax = plt.subplots(figsize=(8, 8))
+            ax = plt.axes()
 
-        def scale_channel(data_grid, c_span, c_clip, cscale):
-            """Scale a data grid to [0, 1] based on c_span and c_clip."""
-            if c_span is None:
-                cmin = np.nanpercentile(data_grid, 1)
-                cmax = np.nanpercentile(data_grid, 99)
-            else:
-                cmin, cmax = c_span
+        rgb_image = self.RGB(
+            r_element,
+            g_element,
+            b_element,
+            cscale=cscale,
+            r_span=r_span,
+            g_span=g_span,
+            b_span=b_span,
+            r_clip=r_clip,
+            g_clip=g_clip,
+            b_clip=b_clip,
+        )
 
-            if c_clip is not None:
-                cmin_clip, cmax_clip = c_clip
-            else:
-                cmin_clip, cmax_clip = cmin, cmax
+        ax.imshow(
+            rgb_image,
+            extent=(self.xi.min(), self.xi.max(), self.yi.max(), self.yi.min()),
+            aspect="equal",
+        )
 
-            clipped = np.clip(data_grid, cmin_clip, cmax_clip)
-            if cscale == 'log':
-                clipped = np.log10(clipped)
-                # scale clipped data to [0, 1]
-                scaled = (clipped - np.log10(cmin)) / (np.log10(cmax) - np.log10(cmin))
-            elif cscale == 'linear':
-                scaled = (clipped - cmin) / (cmax - cmin)
-
-            return scaled
-
-        r_scaled = scale_channel(self.data_grids[r_element], r_span, r_clip, cscale)
-        g_scaled = scale_channel(self.data_grids[g_element], g_span, g_clip, cscale)
-        b_scaled = scale_channel(self.data_grids[b_element], b_span, b_clip, cscale)
-
-        rgb_image = np.dstack((r_scaled, g_scaled, b_scaled))
-
-        ax.imshow(rgb_image,
-                  extent=(self.xi.min(), self.xi.max(), 
-                          self.yi.max(), self.yi.min()),
-                aspect='equal')
-        
-        ax.set_title(f'RGB Composite: R={r_element}, G={g_element}, B={b_element}')
+        ax.set_title(f"RGB Composite: R={r_element}, G={g_element}, B={b_element}")
         ax.set_xlabel(self.x_col)
         ax.set_ylabel(self.y_col)
 
         return ax
-      
+
     def plot_element_widget(self):
         """
         Create an interactive widget to choose element to plot.
@@ -754,65 +857,72 @@ class RasterMap:
         None.
         """
         # list elements with ppm or cps in name
-        element_options = [key for key in self.data_grids.keys() if 'ppm' in key or 'cps' in key]
+        element_options = [
+            key for key in self.data_grids.keys() if "ppm" in key or "cps" in key
+        ]
 
         # set up widgets manually
 
         # element select
-        element_select = widgets.Dropdown(options=element_options, 
-                                          description='Element:')
+        element_select = widgets.Dropdown(
+            options=element_options, description="Element:"
+        )
 
         # color options
-        cscale_select = widgets.Dropdown(options=['log', 'linear'], 
-                                         description='Color Scale:')
-        cmin_text = widgets.FloatText(value=None,
-                                      description='cmin:')
-        cmax_text = widgets.FloatText(value=None,
-                                      description='cmax:')
-        clip_checkbox = widgets.Checkbox(value=False, description='Clip Data')
-        clip_min_text = widgets.FloatText(value=None,
-                                         description='Clip Min:')
-        clip_max_text = widgets.FloatText(value=None,
-                                         description='Clip Max:')
-        
+        cscale_select = widgets.Dropdown(
+            options=["log", "linear"], description="Color Scale:"
+        )
+        cmin_text = widgets.FloatText(value=None, description="cmin:")
+        cmax_text = widgets.FloatText(value=None, description="cmax:")
+        clip_checkbox = widgets.Checkbox(value=False, description="Clip Data")
+        clip_min_text = widgets.FloatText(value=None, description="Clip Min:")
+        clip_max_text = widgets.FloatText(value=None, description="Clip Max:")
+
         # plot button
         plot_button = widgets.Button(description="Plot")
 
         # output area
         output = widgets.Output()
-        
+
         # update values for cmin, cmax when element or cscale changes
         def update_cmin_cmax(*args):
             element = element_select.value
             cscale = cscale_select.value
-            if cscale == 'log':
+            if cscale == "log":
                 cmin_text.value = np.nanpercentile(self.data_grids[element], 1)
                 cmax_text.value = np.nanpercentile(self.data_grids[element], 99)
-            elif cscale == 'linear':
+            elif cscale == "linear":
                 cmin_text.value = np.nanmin(self.data_grids[element])
                 cmax_text.value = np.nanmax(self.data_grids[element])
-        element_select.observe(update_cmin_cmax, names='value')
-        cscale_select.observe(update_cmin_cmax, names='value')
-        
-        ui = widgets.VBox([element_select, 
-                           widgets.HBox([cscale_select,
-                                        cmin_text,
-                                        cmax_text]),
-                           widgets.HBox([clip_checkbox, clip_min_text, clip_max_text]),
-                           plot_button,
-                           output])
+
+        element_select.observe(update_cmin_cmax, names="value")
+        cscale_select.observe(update_cmin_cmax, names="value")
+
+        ui = widgets.VBox(
+            [
+                element_select,
+                widgets.HBox([cscale_select, cmin_text, cmax_text]),
+                widgets.HBox([clip_checkbox, clip_min_text, clip_max_text]),
+                plot_button,
+                output,
+            ]
+        )
         display(ui)
-        
+
         # define plot function, placed in output area
         def plot_func():
             with output:
                 output.clear_output()
                 fig, ax = plt.subplots(figsize=(8, 6))
-                self.plot_element(element_select.value,
-                                ax=ax,
-                                cscale=cscale_select.value,
-                                cspan=(cmin_text.value, cmax_text.value),
-                                clip=(clip_min_text.value, clip_max_text.value) if clip_checkbox.value else None)
+                self.plot_element(
+                    element_select.value,
+                    ax=ax,
+                    cscale=cscale_select.value,
+                    cspan=(cmin_text.value, cmax_text.value),
+                    clip=(clip_min_text.value, clip_max_text.value)
+                    if clip_checkbox.value
+                    else None,
+                )
                 plt.show()
 
         # bind plot function to button click
@@ -830,58 +940,52 @@ class RasterMap:
         None.
         """
         # list elements with ppm or cps in name
-        element_options = [key for key in self.data_grids.keys() if 'ppm' in key or 'cps' in key]
+        element_options = [
+            key for key in self.data_grids.keys() if "ppm" in key or "cps" in key
+        ]
 
         # set up widgets manually
 
         # element selects
-        r_element_select = widgets.Dropdown(options=element_options, 
-                                            description='Red:')
-        g_element_select = widgets.Dropdown(options=element_options, 
-                                            description='Green:')
-        b_element_select = widgets.Dropdown(options=element_options, 
-                                            description='Blue:')
+        r_element_select = widgets.Dropdown(options=element_options, description="Red:")
+        g_element_select = widgets.Dropdown(
+            options=element_options, description="Green:"
+        )
+        b_element_select = widgets.Dropdown(
+            options=element_options, description="Blue:"
+        )
         # gather into list
         rgb_element_selects = [r_element_select, g_element_select, b_element_select]
 
         # color scale option
-        cscale_select = widgets.Dropdown(options=['log', 'linear'], 
-                                         description='Color Scale:')
+        cscale_select = widgets.Dropdown(
+            options=["log", "linear"], description="Color Scale:"
+        )
 
         # cmin, cmax for each channel
-        cmin_r_text = widgets.FloatText(value=None,
-                                        description='cmin R:')
-        cmax_r_text = widgets.FloatText(value=None,
-                                        description='cmax R:')
-        cmin_g_text = widgets.FloatText(value=None,
-                                        description='cmin G:')
-        cmax_g_text = widgets.FloatText(value=None,
-                                        description='cmax G:')
-        cmin_b_text = widgets.FloatText(value=None,
-                                        description='cmin B:')
-        cmax_b_text = widgets.FloatText(value=None,
-                                        description='cmax B:')
+        cmin_r_text = widgets.FloatText(value=None, description="cmin R:")
+        cmax_r_text = widgets.FloatText(value=None, description="cmax R:")
+        cmin_g_text = widgets.FloatText(value=None, description="cmin G:")
+        cmax_g_text = widgets.FloatText(value=None, description="cmax G:")
+        cmin_b_text = widgets.FloatText(value=None, description="cmin B:")
+        cmax_b_text = widgets.FloatText(value=None, description="cmax B:")
         # clip min and max for each channel
-        clip_r_checkbox = widgets.Checkbox(value=False, description='Clip R')
-        clip_r_min_text = widgets.FloatText(value=None,
-                                         description='Clip R Min:')
-        clip_r_max_text = widgets.FloatText(value=None,
-                                         description='Clip R Max:')
-        clip_g_checkbox = widgets.Checkbox(value=False, description='Clip G')
-        clip_g_min_text = widgets.FloatText(value=None,
-                                         description='Clip G Min:')
-        clip_g_max_text = widgets.FloatText(value=None,
-                                         description='Clip G Max:')
-        clip_b_checkbox = widgets.Checkbox(value=False, description='Clip B')
-        clip_b_min_text = widgets.FloatText(value=None,
-                                         description='Clip B Min:')
-        clip_b_max_text = widgets.FloatText(value=None,
-                                         description='Clip B Max:')
+        clip_r_checkbox = widgets.Checkbox(value=False, description="Clip R")
+        clip_r_min_text = widgets.FloatText(value=None, description="Clip R Min:")
+        clip_r_max_text = widgets.FloatText(value=None, description="Clip R Max:")
+        clip_g_checkbox = widgets.Checkbox(value=False, description="Clip G")
+        clip_g_min_text = widgets.FloatText(value=None, description="Clip G Min:")
+        clip_g_max_text = widgets.FloatText(value=None, description="Clip G Max:")
+        clip_b_checkbox = widgets.Checkbox(value=False, description="Clip B")
+        clip_b_min_text = widgets.FloatText(value=None, description="Clip B Min:")
+        clip_b_max_text = widgets.FloatText(value=None, description="Clip B Max:")
         # gather into list
-        cbound_texts = [[cmin_r_text, cmax_r_text],
-                        [cmin_g_text, cmax_g_text],
-                        [cmin_b_text, cmax_b_text]]
-        
+        cbound_texts = [
+            [cmin_r_text, cmax_r_text],
+            [cmin_g_text, cmax_g_text],
+            [cmin_b_text, cmax_b_text],
+        ]
+
         # update cmin, cmax when element changes
         def update_cmin_cmax_channel(channel_idx, *args):
             element = rgb_element_selects[channel_idx].value
@@ -889,82 +993,120 @@ class RasterMap:
             cmax_text = cbound_texts[channel_idx][1]
             cmin_text.value = np.nanpercentile(self.data_grids[element], 1)
             cmax_text.value = np.nanpercentile(self.data_grids[element], 99)
+
         for idx in range(3):
-            rgb_element_selects[idx].observe(lambda change, idx=idx: update_cmin_cmax_channel(idx), names='value')
+            rgb_element_selects[idx].observe(
+                lambda change, idx=idx: update_cmin_cmax_channel(idx), names="value"
+            )
 
         # initialize cmin, cmax values
         for idx in range(3):
             update_cmin_cmax_channel(idx)
 
         # plot with axis checkbox
-        axis_checkbox = widgets.Checkbox(value=True, description='Show Axis')
+        axis_checkbox = widgets.Checkbox(value=True, description="Show Axis")
 
         # plot button
         plot_button = widgets.Button(description="Plot")
 
         # save checkbox and path
-        save_path = widgets.Text(value='', description='Save Path:')
+        save_path = widgets.Text(value="", description="Save Path:")
         save_check = widgets.Checkbox(value=False, description="Save")
 
         # output area
         output = widgets.Output()
-        
-        ui = widgets.VBox([widgets.HBox([widgets.VBox([r_element_select,
-                                                      cmin_r_text,
-                                                      cmax_r_text,
-                                                      clip_r_checkbox,
-                                                      clip_r_min_text,
-                                                      clip_r_max_text]),
-                                        widgets.VBox([g_element_select,
-                                                      cmin_g_text,
-                                                      cmax_g_text,
-                                                      clip_g_checkbox,
-                                                      clip_g_min_text,
-                                                      clip_g_max_text]),
-                                        widgets.VBox([b_element_select,
-                                                      cmin_b_text,
-                                                      cmax_b_text,
-                                                      clip_b_checkbox,
-                                                      clip_b_min_text,
-                                                      clip_b_max_text])]),
-                           cscale_select,
-                           axis_checkbox,
-                           plot_button,
-                           widgets.HBox([save_path, save_check]),
-                           output])
+
+        ui = widgets.VBox(
+            [
+                widgets.HBox(
+                    [
+                        widgets.VBox(
+                            [
+                                r_element_select,
+                                cmin_r_text,
+                                cmax_r_text,
+                                clip_r_checkbox,
+                                clip_r_min_text,
+                                clip_r_max_text,
+                            ]
+                        ),
+                        widgets.VBox(
+                            [
+                                g_element_select,
+                                cmin_g_text,
+                                cmax_g_text,
+                                clip_g_checkbox,
+                                clip_g_min_text,
+                                clip_g_max_text,
+                            ]
+                        ),
+                        widgets.VBox(
+                            [
+                                b_element_select,
+                                cmin_b_text,
+                                cmax_b_text,
+                                clip_b_checkbox,
+                                clip_b_min_text,
+                                clip_b_max_text,
+                            ]
+                        ),
+                    ]
+                ),
+                cscale_select,
+                axis_checkbox,
+                plot_button,
+                widgets.HBox([save_path, save_check]),
+                output,
+            ]
+        )
         display(ui)
-        
+
         # define plot function, placed in output area
         def plot_func():
             with output:
                 output.clear_output()
                 fig, ax = plt.subplots(figsize=(8, 8))
-                self.plot_RGB(r_element_select.value,
-                              g_element_select.value,
-                              b_element_select.value,
-                              ax=ax,
-                              cscale=cscale_select.value,
-                              r_span=(cmin_r_text.value, cmax_r_text.value),
-                              g_span=(cmin_g_text.value, cmax_g_text.value),
-                              b_span=(cmin_b_text.value, cmax_b_text.value),
-                              r_clip=(clip_r_min_text.value, clip_r_max_text.value) if clip_r_checkbox.value else None,
-                              g_clip=(clip_g_min_text.value, clip_g_max_text.value) if clip_g_checkbox.value else None,
-                              b_clip=(clip_b_min_text.value, clip_b_max_text.value) if clip_b_checkbox.value else None)
+                self.plot_RGB(
+                    r_element_select.value,
+                    g_element_select.value,
+                    b_element_select.value,
+                    ax=ax,
+                    cscale=cscale_select.value,
+                    r_span=(cmin_r_text.value, cmax_r_text.value),
+                    g_span=(cmin_g_text.value, cmax_g_text.value),
+                    b_span=(cmin_b_text.value, cmax_b_text.value),
+                    r_clip=(clip_r_min_text.value, clip_r_max_text.value)
+                    if clip_r_checkbox.value
+                    else None,
+                    g_clip=(clip_g_min_text.value, clip_g_max_text.value)
+                    if clip_g_checkbox.value
+                    else None,
+                    b_clip=(clip_b_min_text.value, clip_b_max_text.value)
+                    if clip_b_checkbox.value
+                    else None,
+                )
                 if not axis_checkbox.value:
-                    ax.axis('off')
-                if save_check.value and save_path.value != '':
-                    plt.savefig(save_path.value, 
-                                format='png',
-                                transparent=True,
-                                dpi=600, bbox_inches='tight')
+                    ax.axis("off")
+                if save_check.value and save_path.value != "":
+                    plt.savefig(
+                        save_path.value,
+                        format="png",
+                        transparent=True,
+                        dpi=600,
+                        bbox_inches="tight",
+                    )
                 plt.show()
+
         # bind plot function to button click
         def on_plot_button_clicked(b):
             plot_func()
+
         plot_button.on_click(on_plot_button_clicked)
 
 
-def drawscale(scale, ax, loc='lower left', type='bar', px_units=1e-6, scale_units=1e-6):
+def drawscale(
+    scale, ax, loc="lower left", type="bar", px_units=1e-6, scale_units=1e-6, color="k"
+):
     """Add scale indicator to current axis.
 
     Parameters
@@ -981,15 +1123,17 @@ def drawscale(scale, ax, loc='lower left', type='bar', px_units=1e-6, scale_unit
         Units for (square) pixel dimensions, by default 1e-6
     scale_units : float, optional
         Units of the scale for labeling purposes, by default 1e-6. Labels as mm for 1e-3, or μm for 1e-6.
+    color : str, optional
+        Color of the scale indicator, by default 'k' (black). By default also applied to the label text.
     """
     # if scale_units is 1e-3, label as mm, if 1e-6, label as μm
     if scale_units == 1e-3:
-        scale_label = 'mm'
+        scale_label = "mm"
     elif scale_units == 1e-6:
-        scale_label = 'μm'
+        scale_label = "μm"
     else:
-        scale_label = f'{scale_units} units'
-    if type == 'bar':
+        scale_label = f"{scale_units} units"
+    if type == "bar":
         # get axis limits
         xlim = ax.get_xlim()
         ylim = ax.get_ylim()
@@ -997,22 +1141,36 @@ def drawscale(scale, ax, loc='lower left', type='bar', px_units=1e-6, scale_unit
         # determine position based on loc string or tuple
         if isinstance(loc, tuple):
             x_start, y_start = loc
-        elif loc == 'lower left':
+        elif loc == "lower left":
             x_start = xlim[0] + 0.05 * (xlim[1] - xlim[0])
             y_start = ylim[0] + 0.05 * (ylim[1] - ylim[0])
-        elif loc == 'lower right':
+        elif loc == "lower right":
             x_start = xlim[1] - 0.05 * (xlim[1] - xlim[0]) - scale
             y_start = ylim[0] + 0.05 * (ylim[1] - ylim[0])
-        elif loc == 'upper left':
+        elif loc == "upper left":
             x_start = xlim[0] + 0.05 * (xlim[1] - xlim[0])
             y_start = ylim[1] - 0.05 * (ylim[1] - ylim[0]) - scale
-        elif loc == 'upper right':
+        elif loc == "upper right":
             x_start = xlim[1] - 0.05 * (xlim[1] - xlim[0]) - scale
             y_start = ylim[1] - 0.05 * (ylim[1] - ylim[0]) - scale
         else:
-            raise ValueError("Invalid location. Choose from 'lower left', 'lower right', 'upper left', 'upper right'.")
+            raise ValueError(
+                "Invalid location. Choose from 'lower left', 'lower right', 'upper left', 'upper right'."
+            )
 
         # draw scale bar
-        ax.plot([x_start, x_start + scale*scale_units/px_units], [y_start, y_start], color='k', linewidth=2)
-        ax.text(x_start + scale * scale_units / (2 * px_units), y_start, f'{scale} {scale_label}', color='k',
-                ha='center', va='bottom', fontsize=8)
+        ax.plot(
+            [x_start, x_start + scale * scale_units / px_units],
+            [y_start, y_start],
+            color=color,
+            linewidth=2,
+        )
+        ax.text(
+            x_start + scale * scale_units / (2 * px_units),
+            y_start,
+            f"{scale} {scale_label}",
+            color=color,
+            ha="center",
+            va="bottom",
+            fontsize=8,
+        )
