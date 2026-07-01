@@ -1,89 +1,89 @@
 ﻿iolite,quantity,type,unit
 238U_ppm_mean,U238,mean,ppm
-238U_ppm_2SE(int),U238,uncertainty,2SE(int)
+238U_ppm_2SE(int),U238,uncertainty,2 sigma (absolute)
 235U_ppm_mean,U235,mean,ppm
-235U_ppm_2SE(int),U235,uncertainty,2SE(int)
+235U_ppm_2SE(int),U235,uncertainty,2 sigma (absolute)
 232Th_ppm_mean,Th232,mean,ppm
-232Th_ppm_2SE(int),Th232,uncertainty,2SE(int)
+232Th_ppm_2SE(int),Th232,uncertainty,2 sigma (absolute)
 208Pb_ppm_mean,Pb208,mean,ppm
-208Pb_ppm_2SE(int),Pb208,uncertainty,2SE(int)
+208Pb_ppm_2SE(int),Pb208,uncertainty,2 sigma (absolute)
 207Pb_ppm_mean,Pb207,mean,ppm
-207Pb_ppm_2SE(int),Pb207,uncertainty,2SE(int)
+207Pb_ppm_2SE(int),Pb207,uncertainty,2 sigma (absolute)
 206Pb_ppm_mean,Pb206,mean,ppm
-206Pb_ppm_2SE(int),Pb206,uncertainty,2SE(int)
+206Pb_ppm_2SE(int),Pb206,uncertainty,2 sigma (absolute)
 204Pb_ppm_mean,Pb204,mean,ppm
-204Pb_ppm_2SE(int),Pb204,uncertainty,2SE(int)
+204Pb_ppm_2SE(int),Pb204,uncertainty,2 sigma (absolute)
 202Pb_ppm_mean,Pb202,mean,ppm
-202Pb_ppm_2SE(int),Pb202,uncertainty,2SE(int)
+202Pb_ppm_2SE(int),Pb202,uncertainty,2 sigma (absolute)
 P31_ppm_mean,P,mean,ppm
-P31_ppm_2SE(int),P,uncertainty,2SE(int)
+P31_ppm_2SE(int),P,uncertainty,2 sigma (absolute)
 Ti49_ppm_mean,Ti,mean,ppm
-Ti49_ppm_2SE(int),Ti,uncertainty,2SE(int)
+Ti49_ppm_2SE(int),Ti,uncertainty,2 sigma (absolute)
 Y89_ppm_mean,Y,mean,ppm
-Y89_ppm_2SE(int),Y,uncertainty,2SE(int)
+Y89_ppm_2SE(int),Y,uncertainty,2 sigma (absolute)
 Zr90_ppm_mean,Zr,mean,ppm
-Zr90_ppm_2SE(int),Zr,uncertainty,2SE(int)
+Zr90_ppm_2SE(int),Zr,uncertainty,2 sigma (absolute)
 Nb93_ppm_mean,Nb,mean,ppm
-Nb93_ppm_2SE(int),Nb,uncertainty,2SE(int)
+Nb93_ppm_2SE(int),Nb,uncertainty,2 sigma (absolute)
 La139_ppm_mean,La,mean,ppm
-La139_ppm_2SE(int),La,uncertainty,2SE(int)
+La139_ppm_2SE(int),La,uncertainty,2 sigma (absolute)
 Ce140_ppm_mean,Ce,mean,ppm
-Ce140_ppm_2SE(int),Ce,uncertainty,2SE(int)
+Ce140_ppm_2SE(int),Ce,uncertainty,2 sigma (absolute)
 Pr141_ppm_mean,Pr,mean,ppm
-Pr141_ppm_2SE(int),Pr,uncertainty,2SE(int)
+Pr141_ppm_2SE(int),Pr,uncertainty,2 sigma (absolute)
 Nd146_ppm_mean,Nd,mean,ppm
-Nd146_ppm_2SE(int),Nd,uncertainty,2SE(int)
+Nd146_ppm_2SE(int),Nd,uncertainty,2 sigma (absolute)
 Sm147_ppm_mean,Sm,mean,ppm
-Sm147_ppm_2SE(int),Sm,uncertainty,2SE(int)
+Sm147_ppm_2SE(int),Sm,uncertainty,2 sigma (absolute)
 Eu153_ppm_mean,Eu,mean,ppm
-Eu153_ppm_2SE(int),Eu,uncertainty,2SE(int)
+Eu153_ppm_2SE(int),Eu,uncertainty,2 sigma (absolute)
 Gd157_ppm_mean,Gd,mean,ppm
-Gd157_ppm_2SE(int),Gd,uncertainty,2SE(int)
+Gd157_ppm_2SE(int),Gd,uncertainty,2 sigma (absolute)
 Tb159_ppm_mean,Tb,mean,ppm
-Tb159_ppm_2SE(int),Tb,uncertainty,2SE(int)
+Tb159_ppm_2SE(int),Tb,uncertainty,2 sigma (absolute)
 Dy163_ppm_mean,Dy,mean,ppm
-Dy163_ppm_2SE(int),Dy,uncertainty,2SE(int)
+Dy163_ppm_2SE(int),Dy,uncertainty,2 sigma (absolute)
 Ho165_ppm_mean,Ho,mean,ppm
-Ho165_ppm_2SE(int),Ho,uncertainty,2SE(int)
+Ho165_ppm_2SE(int),Ho,uncertainty,2 sigma (absolute)
 Er166_ppm_mean,Er,mean,ppm
-Er166_ppm_2SE(int),Er,uncertainty,2SE(int)
+Er166_ppm_2SE(int),Er,uncertainty,2 sigma (absolute)
 Tm169_ppm_mean,Tm,mean,ppm
-Tm169_ppm_2SE(int),Tm,uncertainty,2SE(int)
+Tm169_ppm_2SE(int),Tm,uncertainty,2 sigma (absolute)
 Yb172_ppm_mean,Yb,mean,ppm
-Yb172_ppm_2SE(int),Yb,uncertainty,2SE(int)
+Yb172_ppm_2SE(int),Yb,uncertainty,2 sigma (absolute)
 Lu175_ppm_mean,Lu,mean,ppm
-Lu175_ppm_2SE(int),Lu,uncertainty,2SE(int)
+Lu175_ppm_2SE(int),Lu,uncertainty,2 sigma (absolute)
 Hf179_ppm_mean,Hf,mean,ppm
-Hf179_ppm_2SE(int),Hf,uncertainty,2SE(int)
+Hf179_ppm_2SE(int),Hf,uncertainty,2 sigma (absolute)
 Ta181_ppm_mean,Ta,mean,ppm
-Ta181_ppm_2SE(int),Ta,uncertainty,2SE(int)
+Ta181_ppm_2SE(int),Ta,uncertainty,2 sigma (absolute)
 Final Pb206/U238_mean,Pb206/U238,mean,ratio
-Final Pb206/U238_2SE(int),Pb206/U238,uncertainty,2SE(int)
-Final Pb206/U238_2SE(prop),Pb206/U238,uncertainty,2SE(prop)
+Final Pb206/U238_2SE(int),Pb206/U238,uncertainty,2 sigma (absolute)
+Final Pb206/U238_2SE(prop),Pb206/U238,uncertainty,2 sigma (absolute)
 Final Pb206/U238 age_mean,Pb206/U238 age,mean,age (Ma)
-Final Pb206/U238 age_2SE(int),Pb206/U238 age,uncertainty,2SE(int)
-Final Pb206/U238 age_2SE(prop),Pb206/U238 age,uncertainty,2SE(prop)
+Final Pb206/U238 age_2SE(int),Pb206/U238 age,uncertainty,2 sigma (absolute)
+Final Pb206/U238 age_2SE(prop),Pb206/U238 age,uncertainty,2 sigma (absolute)
 Final Pb207/U235_mean,Pb207/U235,mean,ratio
-Final Pb207/U235_2SE(prop),Pb207/U235,uncertainty,2SE(prop)
-Final Pb207/U235_2SE(int),Pb207/U235,uncertainty,2SE(int)
+Final Pb207/U235_2SE(prop),Pb207/U235,uncertainty,2 sigma (absolute)
+Final Pb207/U235_2SE(int),Pb207/U235,uncertainty,2 sigma (absolute)
 Final Pb207/U235 age_mean,Pb207/U235 age,mean,age (Ma)
-Final Pb207/U235 age_2SE(int),Pb207/U235 age,uncertainty,2SE(int)
-Final Pb207/U235 age_2SE(prop),Pb207/U235 age,uncertainty,2SE(prop)
+Final Pb207/U235 age_2SE(int),Pb207/U235 age,uncertainty,2 sigma (absolute)
+Final Pb207/U235 age_2SE(prop),Pb207/U235 age,uncertainty,2 sigma (absolute)
 Final Pb208/Th232_mean,Pb208/Th232,mean,ratio
-Final Pb208/Th232_2SE(int),Pb208/Th232,uncertainty,2SE(int)
-Final Pb208/Th232_2SE(prop),Pb208/Th232,uncertainty,2SE(prop)
+Final Pb208/Th232_2SE(int),Pb208/Th232,uncertainty,2 sigma (absolute)
+Final Pb208/Th232_2SE(prop),Pb208/Th232,uncertainty,2 sigma (absolute)
 Final Pb208/Th232 age_mean,Pb208/Th232age,mean,age (Ma)
-Final Pb208/Th232 age_2SE(int),Pb208/Th232age,uncertainty,2SE(int)
-Final Pb208/Th232 age_2SE(prop),Pb208/Th232age,uncertainty,2SE(prop)
+Final Pb208/Th232 age_2SE(int),Pb208/Th232age,uncertainty,2 sigma (absolute)
+Final Pb208/Th232 age_2SE(prop),Pb208/Th232age,uncertainty,2 sigma (absolute)
 Final Pb207/Pb206_mean,Pb207/Pb206,mean,ratio
-Final Pb207/Pb206_2SE(int),Pb207/Pb206,uncertainty,2SE(int)
-Final Pb207/Pb206_2SE(prop),Pb207/Pb206,uncertainty,2SE(prop)
+Final Pb207/Pb206_2SE(int),Pb207/Pb206,uncertainty,2 sigma (absolute)
+Final Pb207/Pb206_2SE(prop),Pb207/Pb206,uncertainty,2 sigma (absolute)
 Final Pb207/Pb206 age_mean,Pb207/Pb206 age,mean,age (Ma)
-Final Pb207/Pb206 age_2SE(int),Pb207/Pb206 age,uncertainty,2SE(int)
-Final Pb207/Pb206 age_2SE(prop),Pb207/Pb206 age,uncertainty,2SE(prop)
+Final Pb207/Pb206 age_2SE(int),Pb207/Pb206 age,uncertainty,2 sigma (absolute)
+Final Pb207/Pb206 age_2SE(prop),Pb207/Pb206 age,uncertainty,2 sigma (absolute)
 Final U238/Pb206_mean,U238/Pb206,mean,ratio
-Final U238/Pb206_2SE(int),U238/Pb206,uncertainty,2SE(int)
-Final U238/Pb206_2SE(prop),U238/Pb206,uncertainty,2SE(prop)
+Final U238/Pb206_2SE(int),U238/Pb206,uncertainty,2 sigma (absolute)
+Final U238/Pb206_2SE(prop),U238/Pb206,uncertainty,2 sigma (absolute)
 Final U/Th_mean,U/Th,mean,ratio
 Approx_U_PPM_mean,U,mean,ppm
 Approx_Th_PPM_mean,Th,mean,ppm
@@ -91,84 +91,84 @@ Approx_Pb_PPM_mean,Pb,mean,ppm
 rho 207Pb/206Pb v 238U/206Pb,rho 207Pb/206Pb v 238U/206Pb,mean,error correlation
 rho 206Pb/238U v 207Pb/235U,rho 206Pb/238U v 207Pb/235U,mean,error correlation
 Si28_ppm_mean,Si,mean,ppm
-Si28_ppm_2SE(RMinc),Si,uncertainty,2SE(RMinc)
-Si28_ppm_2SE(int),Si,uncertainty,2SE(int)
-P31_ppm_2SE(RMinc),P,uncertainty,2SE(RMinc)
+Si28_ppm_2SE(RMinc),Si,uncertainty,2 sigma (absolute)
+Si28_ppm_2SE(int),Si,uncertainty,2 sigma (absolute)
+P31_ppm_2SE(RMinc),P,uncertainty,2 sigma (absolute)
 Sr88_ppm_mean,Sr,mean,ppm
-Sr88_ppm_2SE(RMinc),Sr,uncertainty,2SE(RMinc)
-Sr88_ppm_2SE(int),Sr,uncertainty,2SE(int)
-Y89_ppm_2SE(RMinc),Y,uncertainty,2SE(RMinc)
-La139_ppm_2SE(RMinc),La,uncertainty,2SE(RMinc)
-Ce140_ppm_2SE(RMinc),Ce,uncertainty,2SE(RMinc)
-Pr141_ppm_2SE(RMinc),Pr,uncertainty,2SE(RMinc)
-Nd146_ppm_2SE(RMinc),Nd,uncertainty,2SE(RMinc)
-Sm147_ppm_2SE(RMinc),Sm,uncertainty,2SE(RMinc)
-Eu153_ppm_2SE(RMinc),Eu,uncertainty,2SE(RMinc)
-Gd157_ppm_2SE(RMinc),Gd,uncertainty,2SE(RMinc)
-Tb159_ppm_2SE(RMinc),Tb,uncertainty,2SE(RMinc)
-Dy163_ppm_2SE(RMinc),Dy,uncertainty,2SE(RMinc)
-Ho165_ppm_2SE(RMinc),Ho,uncertainty,2SE(RMinc)
-Er166_ppm_2SE(RMinc),Er,uncertainty,2SE(RMinc)
-Tm169_ppm_2SE(RMinc),Tm,uncertainty,2SE(RMinc)
-Yb172_ppm_2SE(RMinc),Yb,uncertainty,2SE(RMinc)
-Lu175_ppm_2SE(RMinc),Lu,uncertainty,2SE(RMinc)
+Sr88_ppm_2SE(RMinc),Sr,uncertainty,2 sigma (absolute)
+Sr88_ppm_2SE(int),Sr,uncertainty,2 sigma (absolute)
+Y89_ppm_2SE(RMinc),Y,uncertainty,2 sigma (absolute)
+La139_ppm_2SE(RMinc),La,uncertainty,2 sigma (absolute)
+Ce140_ppm_2SE(RMinc),Ce,uncertainty,2 sigma (absolute)
+Pr141_ppm_2SE(RMinc),Pr,uncertainty,2 sigma (absolute)
+Nd146_ppm_2SE(RMinc),Nd,uncertainty,2 sigma (absolute)
+Sm147_ppm_2SE(RMinc),Sm,uncertainty,2 sigma (absolute)
+Eu153_ppm_2SE(RMinc),Eu,uncertainty,2 sigma (absolute)
+Gd157_ppm_2SE(RMinc),Gd,uncertainty,2 sigma (absolute)
+Tb159_ppm_2SE(RMinc),Tb,uncertainty,2 sigma (absolute)
+Dy163_ppm_2SE(RMinc),Dy,uncertainty,2 sigma (absolute)
+Ho165_ppm_2SE(RMinc),Ho,uncertainty,2 sigma (absolute)
+Er166_ppm_2SE(RMinc),Er,uncertainty,2 sigma (absolute)
+Tm169_ppm_2SE(RMinc),Tm,uncertainty,2 sigma (absolute)
+Yb172_ppm_2SE(RMinc),Yb,uncertainty,2 sigma (absolute)
+Lu175_ppm_2SE(RMinc),Lu,uncertainty,2 sigma (absolute)
 Ti_ppm_m49,Ti,mean,ppm
-Ti_ppm_m49_Int2SE,Ti,uncertainty,2SE(int)
+Ti_ppm_m49_Int2SE,Ti,uncertainty,2 sigma (absolute)
 Y_ppm_m89,Y,mean,ppm
-Y_ppm_m89_Int2SE,Y,uncertainty,2SE(int)
+Y_ppm_m89_Int2SE,Y,uncertainty,2 sigma (absolute)
 Nb_ppm_m93,Nb,mean,ppm
-Nb_ppm_m93_Int2SE,Nb,uncertainty,2SE(int)
+Nb_ppm_m93_Int2SE,Nb,uncertainty,2 sigma (absolute)
 La_ppm_m139,La,mean,ppm
-La_ppm_m139_Int2SE,La,uncertainty,2SE(int)
+La_ppm_m139_Int2SE,La,uncertainty,2 sigma (absolute)
 Ce_ppm_m140,Ce,mean,ppm
-Ce_ppm_m140_Int2SE,Ce,uncertainty,2SE(int)
+Ce_ppm_m140_Int2SE,Ce,uncertainty,2 sigma (absolute)
 Pr_ppm_m141,Pr,mean,ppm
-Pr_ppm_m141_Int2SE,Pr,uncertainty,2SE(int)
+Pr_ppm_m141_Int2SE,Pr,uncertainty,2 sigma (absolute)
 Nd_ppm_m146,Nd,mean,ppm
-Nd_ppm_m146_Int2SE,Nd,uncertainty,2SE(int)
+Nd_ppm_m146_Int2SE,Nd,uncertainty,2 sigma (absolute)
 Sm_ppm_m147,Sm,mean,ppm
-Sm_ppm_m147_Int2SE,Sm,uncertainty,2SE(int)
+Sm_ppm_m147_Int2SE,Sm,uncertainty,2 sigma (absolute)
 Eu_ppm_m153,Eu,mean,ppm
-Eu_ppm_m153_Int2SE,Eu,uncertainty,2SE(int)
+Eu_ppm_m153_Int2SE,Eu,uncertainty,2 sigma (absolute)
 Gd_ppm_m157,Gd,mean,ppm
-Gd_ppm_m157_Int2SE,Gd,uncertainty,2SE(int)
+Gd_ppm_m157_Int2SE,Gd,uncertainty,2 sigma (absolute)
 Tb_ppm_m159,Tb,mean,ppm
-Tb_ppm_m159_Int2SE,Tb,uncertainty,2SE(int)
+Tb_ppm_m159_Int2SE,Tb,uncertainty,2 sigma (absolute)
 Dy_ppm_m163,Dy,mean,ppm
-Dy_ppm_m163_Int2SE,Dy,uncertainty,2SE(int)
+Dy_ppm_m163_Int2SE,Dy,uncertainty,2 sigma (absolute)
 Ho_ppm_m165,Ho,mean,ppm
-Ho_ppm_m165_Int2SE,Ho,uncertainty,2SE(int)
+Ho_ppm_m165_Int2SE,Ho,uncertainty,2 sigma (absolute)
 Er_ppm_m166,Er,mean,ppm
-Er_ppm_m166_Int2SE,Er,uncertainty,2SE(int)
+Er_ppm_m166_Int2SE,Er,uncertainty,2 sigma (absolute)
 Tm_ppm_m169,Tm,mean,ppm
-Tm_ppm_m169_Int2SE,Tm,uncertainty,2SE(int)
+Tm_ppm_m169_Int2SE,Tm,uncertainty,2 sigma (absolute)
 Yb_ppm_m172,Yb,mean,ppm
-Yb_ppm_m172_Int2SE,Yb,uncertainty,2SE(int)
+Yb_ppm_m172_Int2SE,Yb,uncertainty,2 sigma (absolute)
 Lu_ppm_m175,Lu,mean,ppm
-Lu_ppm_m175_Int2SE,Lu,uncertainty,2SE(int)
+Lu_ppm_m175_Int2SE,Lu,uncertainty,2 sigma (absolute)
 Hf_ppm_m178,Hf,mean,ppm
-Hf_ppm_m178_Int2SE,Hf,uncertainty,2SE(int)
+Hf_ppm_m178_Int2SE,Hf,uncertainty,2 sigma (absolute)
 Mg24_ppm_mean,Mg,mean,ppm
-Mg24_ppm_2SE(int),Mg,uncertainty,2SE(int)
+Mg24_ppm_2SE(int),Mg,uncertainty,2 sigma (absolute)
 Al27_ppm_mean,Al,mean,ppm
-Al27_ppm_2SE(int),Al,uncertainty,2SE(int)
+Al27_ppm_2SE(int),Al,uncertainty,2 sigma (absolute)
 Ca43_ppm_mean,Ca,mean,ppm
-Ca43_ppm_2SE(int),Ca,uncertainty,2SE(int)
+Ca43_ppm_2SE(int),Ca,uncertainty,2 sigma (absolute)
 Mn55_ppm_mean,Mn,mean,ppm
-Mn55_ppm_2SE(int),Mn,uncertainty,2SE(int)
+Mn55_ppm_2SE(int),Mn,uncertainty,2 sigma (absolute)
 Fe56_ppm_mean,Fe,mean,ppm
-Fe56_ppm_2SE(int),Fe,uncertainty,2SE(int)
+Fe56_ppm_2SE(int),Fe,uncertainty,2 sigma (absolute)
 Ba137_ppm_mean,Ba,mean,ppm
-Ba137_ppm_2SE(int),Ba,uncertainty,2SE(int)
+Ba137_ppm_2SE(int),Ba,uncertainty,2 sigma (absolute)
 Lu176_Hf177_Corr_mean,Lu176/Hf177,mean,ratio
-Lu176_Hf177_Corr_2SE(int),Lu176/Hf177,uncertainty,2SE(int)
+Lu176_Hf177_Corr_2SE(int),Lu176/Hf177,uncertainty,2 sigma (absolute)
 Yb176_Hf177_Corr_mean,Yb176/Hf177,mean,ratio
-Yb176_Hf177_Corr_2SE(int),Yb176/Hf177,uncertainty,2SE(int)
+Yb176_Hf177_Corr_2SE(int),Yb176/Hf177,uncertainty,2 sigma (absolute)
 Hf176_177_Corr_mean,Hf176/Hf177,mean,ratio
-Hf176_177_Corr_2SE(int),Hf176/Hf177,uncertainty,2SE(int)
+Hf176_177_Corr_2SE(int),Hf176/Hf177,uncertainty,2 sigma (absolute)
 Hf178_177_mean,Hf178/Hf177,mean,ratio
-Hf178_177_2SE(int),Hf178/Hf177,uncertainty,2SE(int)
+Hf178_177_2SE(int),Hf178/Hf177,uncertainty,2 sigma (absolute)
 StdCorr_Hf176_177_mean,Hf176/Hf177,mean,ratio
-StdCorr_Hf176_177_2SE(int),Hf176/Hf177,uncertainty,2SE(int)
+StdCorr_Hf176_177_2SE(int),Hf176/Hf177,uncertainty,2 sigma (absolute)
 Hf180_177_mean,Hf180/Hf177,mean,ratio
-Hf180_177_2SE(int),Hf180/Hf177,uncertainty,2SE(int)
+Hf180_177_2SE(int),Hf180/Hf177,uncertainty,2 sigma (absolute)
