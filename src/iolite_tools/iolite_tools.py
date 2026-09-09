@@ -325,6 +325,9 @@ def measurements2sql(df, refmat="", dropna=True):
         with columns to match Measurements table in geochemdb
 
     """
+    # verify that there are no duplicated indices
+    assert not df.index.duplicated().any(), "duplicated indices in dataframe"
+
     # drop aliquot and sample from index
     df = df.droplevel(["aliquot", "sample"])
 
