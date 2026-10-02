@@ -151,7 +151,7 @@ def excel2measurements(excel_paths, run_dates, run_numbers, run_type):
     Returns
     -------
     df : pd.DataFrame
-        DataFrame of measurements  with measurement units and uncertainties in
+        DataFrame of measurements with measurement units and uncertainties in
         columns
 
     """
@@ -325,6 +325,9 @@ def measurements2sql(df, refmat="", dropna=True):
         with columns to match Measurements table in geochemdb
 
     """
+    # verify that there are no duplicated indices
+    assert not df.index.duplicated().any(), "duplicated indices in dataframe"
+
     # drop aliquot and sample from index
     df = df.droplevel(["aliquot", "sample"])
 
